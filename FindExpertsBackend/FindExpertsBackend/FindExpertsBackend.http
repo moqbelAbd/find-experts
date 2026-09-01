@@ -1,0 +1,6 @@
+@FindExpertsBackend_HostAddress = http://localhost:5065
+
+GET {{FindExpertsBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
