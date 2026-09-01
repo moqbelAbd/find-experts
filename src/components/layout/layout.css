@@ -1,0 +1,78 @@
+.site-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-main {
+    flex: 1;
+}
+
+.site-footer {
+    background-color: #17201C;
+    color: #8B9690;
+    padding: 28px 0;
+    margin-top: auto;
+}
+
+.footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.footer-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-logo-box {
+    width: 28px;
+    height: 28px;
+    background-color: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-logo-text {
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.footer-brand-title {
+    font-weight: 600;
+    color: #F7F9F8;
+    font-size: 0.875rem;
+}
+
+.footer-description {
+    font-size: 0.75rem;
+    color: #8B9690;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(221, 228, 223, 0.1);
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+/* Mobile Stack for Footer */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
