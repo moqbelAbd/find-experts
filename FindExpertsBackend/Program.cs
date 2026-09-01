@@ -12,11 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 
-// 1. Add EF Core DbContext
+//  Add EF Core DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Add ASP.NET Core Identity
+//  Add ASP.NET Core Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -28,7 +28,18 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. Add JWT Authentication
+//  CONFIGURE CORS POLICY HEREbuilder.Services.AddCors(options =>
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // The Vite React URL
+              .AllowAnyHeader()                     // Allows Authorization headers (JWT)
+              .AllowAnyMethod();                    // Allows POST, GET, PUT, DELETE
+    });
+});
+
+// Add JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var key = Encoding.UTF8.GetBytes(jwtKey);
 
@@ -54,7 +65,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -66,7 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowReactApp");
 app.UseAuthorization();
 app.UseAuthorization();
 app.MapControllers();

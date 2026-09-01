@@ -483,37 +483,3 @@ $RECYCLE.BIN/
 # Custom Rules: Environment-Specific Configurations (Keeps database passwords safe!)
 appsettings.Development.json
 appsettings.Local.json
-
-
-# =========================
-# Frontend (React / Vite)
-# =========================
-
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
-
-# Build output
-dist/
-dist-ssr/
-build/
-
-# Local Environment variables (Keep secrets out of GitHub!)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Editor directories and files (Optional but recommended)
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
