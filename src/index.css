@@ -1,0 +1,48 @@
+:root {
+  --primary: #12372A;       /* Primary 900 */
+  --accent: #32956D;        /* Primary 500 */
+  --accent-hover: #287A59;  /* Primary 600 */
+
+  /* Layout & Text */
+  --bg-main: #F7F9F8;       /* Background */
+  --surface: #F1FAF6;       /* Soft greeny white (Primary 50) */
+  --text-main: #17201C;     /* Text */
+  --text-muted: #66736C;    /* Secondary text */
+  --border: #DDE4DF;        /* Border */
+
+  /* Status Colors (kept from original) */
+  --danger: #dc3545;
+  --danger-bg: #f8d7da;
+  --success: #198754;
+  --success-bg: #d1e7dd;
+
+  --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
