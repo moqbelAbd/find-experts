@@ -302,4 +302,12 @@
         display: flex; /* Shown when toggled */
     }
 
+    .nav-actions {
+        gap: 12px;
+        margin-right: 12px;
+    }
+
+    .user-name {
+        display: none;
+    }
 }
