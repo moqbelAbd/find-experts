@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //  Add ASP.NET Core Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid> >(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
@@ -28,14 +28,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-//  CONFIGURE CORS POLICY HEREbuilder.Services.AddCors(options =>
+//  CONFIGURE CORS POLICY 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // The Vite React URL
+        policy.WithOrigins("http://localhost:5173") 
               .AllowAnyHeader()                     // Allows Authorization headers (JWT)
-              .AllowAnyMethod();                    // Allows POST, GET, PUT, DELETE
+              .AllowAnyMethod();
     });
 });
 

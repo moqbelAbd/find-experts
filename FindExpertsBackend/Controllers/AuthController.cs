@@ -15,12 +15,12 @@ namespace FindExpertsBackend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole <Guid> > _roleManager;
         private readonly IConfiguration _configuration;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
+            RoleManager<IdentityRole <Guid> > roleManager,
             IConfiguration configuration)
         {
             _userManager = userManager;
@@ -37,7 +37,7 @@ namespace FindExpertsBackend.Controllers
                 return BadRequest(ApiResponse<string>.FailureResult("A user with this email already exists."));
             }
 
-            var user = new ApplicationUser
+            var user = new User
             {
                 UserName = model.Email,
                 Email = model.Email,
@@ -69,7 +69,7 @@ namespace FindExpertsBackend.Controllers
 
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName ?? user.UserName!),
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
