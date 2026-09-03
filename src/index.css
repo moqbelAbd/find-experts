@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --primary: #12372A;       /* Primary 900 */
   --accent: #32956D;        /* Primary 500 */
@@ -16,7 +20,12 @@
   --success: #198754;
   --success-bg: #d1e7dd;
 
+  /* Typography & Layout */
   --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --spacing-md: 0.5rem;
+  --spacing-xl: 1.25rem;
+  --radius-sm: 6px;
+  --transition-base: 0.2s ease-in-out;
 }
 
 * {
@@ -31,6 +40,7 @@ body {
   color: var(--text-main);
   line-height: 1.5;
   min-height: 100vh;
+  padding-top: 80px;
 }
 
 a {
@@ -42,7 +52,101 @@ a:hover {
   text-decoration: underline;
 }
 
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul {
+  list-style: none;
+}
+
 button {
   cursor: pointer;
   font-family: inherit;
+}
+
+select, input, textarea {
+  font-family: inherit;
+}
+
+/* =========================================
+   LAYOUT UTILITIES
+   ========================================= */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+section {
+  padding: 40px 0;
+}
+
+.section-title {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+/* =========================================
+   REUSABLE COMPONENTS
+   ========================================= */
+.btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.primary-btn {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.primary-btn:hover {
+  background-color: var(--accent-hover);
+  color: #ffffff;
+}
+
+.secondary-btn {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.secondary-btn:hover {
+  background-color: var(--surface);
+}
+
+.danger-btn {
+  background-color: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.danger-btn:hover {
+  background-color: var(--danger-bg);
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
 }

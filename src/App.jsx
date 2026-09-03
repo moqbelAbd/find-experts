@@ -5,17 +5,18 @@ import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Layout from './components/layout/Layout';
+import UserProfile from "./pages/Profile/UserProfile.jsx";
 
 export default function App() {
     return (
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
-                    {/* Auth pages (no navbar) */}
+                    {/* Auth pages */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
-                    {/* Main pages (with navbar) */}
+                    {/* Main pages  */}
                     <Route element={<Layout />}>
                         <Route
                             path="/dashboard"
@@ -25,7 +26,16 @@ export default function App() {
                                 </ProtectedRoute>
                             }
                         />
-                        {/* Add other routes here like /experts, /posts, etc. */}
+
+                        <Route
+                            path="/profile"
+                            element={
+                                <ProtectedRoute>
+                                    <UserProfile />
+                                </ProtectedRoute>
+                            }
+                        />
+
                     </Route>
 
                     <Route path="*" element={<Navigate to="/login" replace />} />

@@ -1,12 +1,12 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, ChevronDown, Menu, X } from 'lucide-react';
+import { Bell, Menu, X } from 'lucide-react';
+import ProfileDropdown from './ProfileDropdown';
 import './navbar.css';
-import {useState} from "react";
+import { useState } from "react";
 
 export default function Navbar() {
     const { user, token, logout } = useAuth();
-
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
@@ -21,7 +21,6 @@ export default function Navbar() {
                 </Link>
             </div>
 
-            {/* Center Links (Transforms into dropdown on mobile) */}
             <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                 {token ? (
                     <>
@@ -59,16 +58,7 @@ export default function Navbar() {
                                 <span className="notification-badge">2</span>
                             </div>
 
-                            <div className="user-profile" onClick={logout} title="Click to logout">
-                                <img
-                                    src={user?.avatar || "https://ui-avatars.com/api/?name=" + (user?.fullName || "User") + "&background=F1FAF6&color=12372A"}
-                                    alt="Avatar"
-                                    className="avatar"
-                                />
-                                <span className="user-name">
-                  {user?.fullName?.split(' ')[0] || "User"} <ChevronDown size={16} color="var(--text-muted)" />
-                </span>
-                            </div>
+                            <ProfileDropdown user={user} logout={logout} />
                         </>
                     ) : (
                         <>
@@ -78,7 +68,6 @@ export default function Navbar() {
                     )}
                 </div>
 
-                {/* Mobile Hamburger Toggle */}
                 <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
                     {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
