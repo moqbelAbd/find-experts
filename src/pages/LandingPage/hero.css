@@ -1,0 +1,113 @@
+
+.hero-section {
+    background-color: #16221c; /* dark green */
+    color: #ffffff;
+    padding: 40px 0 120px 0;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    letter-spacing: -1px;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: #9ab0a3; /* Light grayish-green for subtitle */
+    margin-bottom: 3rem;
+    max-width: 850px;
+    font-weight: 400;
+}
+
+/* =========================================
+   HERO SEARCH BAR
+   ========================================= */
+.hero-search-wrapper {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 2.5rem;
+    max-width: 850px;
+}
+
+.hero-search-input-group {
+    position: relative;
+    flex: 1;
+}
+
+.hero-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #66736C;
+}
+
+.hero-input {
+    width: 100%;
+    background-color: #202e26; /* Slightly lighter than background */
+    border: 1px solid #2d4236;
+    border-radius: var(--radius-sm);
+    padding: 16px 16px 16px 48px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: border-color var(--transition-base);
+}
+
+.hero-input::placeholder {
+    color: #66736C;
+}
+
+.hero-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.hero-btn{
+    background-color: var(--accent-hover)
+}
+
+.hero-btn:hover {
+    background-color: var(--primary)
+}
+.hero-search-btn {
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+/* =========================================
+   HERO ACTION BUTTONS
+   ========================================= */
+.hero-actions {
+    display: flex;
+    gap: 16px;
+}
+
+/* The transparent outline button from your image */
+.hero-outline-btn {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #2d4236 !important;
+}
+
+.hero-outline-btn:hover {
+    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-search-wrapper {
+        flex-direction: column;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+}

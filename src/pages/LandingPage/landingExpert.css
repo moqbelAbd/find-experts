@@ -1,0 +1,83 @@
+.landing-expert-section {
+    background-color: #16221c;
+    padding: 10px 0;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.expert-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.expert-subtitle {
+    font-size: 1.125rem;
+    color: #9ab0a3;
+    margin-bottom: 32px;
+    max-width: 700px;
+}
+
+.accent-btn {
+    background-color: var(--accent);
+    color: #ffffff;
+}
+
+.accent-btn:hover {
+    background-color: var(--accent-hover);
+    color: #ffffff;
+}
+
+.expert-cta-btn {
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+.expert-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px;
+    margin-top: 80px;
+}
+
+.expert-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    margin-top: 2px;
+}
+
+.feature-text h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.feature-text p {
+    color: #9ab0a3;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN ADDITIONS
+   ========================================= */
+@media (max-width: 992px) {
+    .expert-features-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        margin-top: 48px;
+    }
+}
+
+@media (max-width: 768px) {
+    .expert-title {
+        font-size: 2rem;
+    }
+}

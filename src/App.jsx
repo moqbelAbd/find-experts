@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Layout from './components/layout/Layout';
 import UserProfile from "./pages/Profile/UserProfile.jsx";
+import LandingPage from "./pages/LandingPage/LandingPage.jsx";
+import HowItWorks from "./pages/LandingPage/HowItWorks.jsx";
 
 export default function App() {
     return (
@@ -18,6 +20,8 @@ export default function App() {
 
                     {/* Main pages  */}
                     <Route element={<Layout />}>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/how-it-works" element={<HowItWorks />} />
                         <Route
                             path="/dashboard"
                             element={

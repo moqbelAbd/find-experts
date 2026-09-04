@@ -61,10 +61,14 @@ export default function Navbar() {
                             <ProfileDropdown user={user} logout={logout} />
                         </>
                     ) : (
-                        <>
-                            <Link to="/login" className="btn-login">Log in</Link>
-                            <Link to="/register" className="btn-get-started">Get started</Link>
-                        </>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                            <Link to="/login" style={{ color: 'var(--text-main)', fontWeight: '500' }}>
+                                Log in
+                            </Link>
+                            <Link to="/register" className="btn primary-btn">
+                                Get started
+                            </Link>
+                        </div>
                     )}
                 </div>
 
