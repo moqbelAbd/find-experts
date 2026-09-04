@@ -1,10 +1,12 @@
 using FindExpertsBackend.Data;
+using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,7 +66,23 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            // Extract the first error message from the failed validation rules
+            var firstError = context.ModelState
+                .Where(e => e.Value.Errors.Count > 0)
+                .Select(e => e.Value.Errors.First().ErrorMessage)
+                .FirstOrDefault() ?? "Validation failed.";
+
+            var response = ApiResponse<string>.FailureResult(firstError);
+
+            return new BadRequestObjectResult(response);
+        };
+    }); 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
@@ -76,8 +94,37 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+//Seed the system Admin
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    var adminEmail = "admin@findexperts.com";
+
+    // Check if the admin already exists
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
+    {
+        var adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+
+        // This securely hashes the password and generates valid stamps!
+        var result = await userManager.CreateAsync(adminUser, "Admin@123!");
+
+        if (result.Succeeded)
+        {
+            // Attach the Admin role
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
+
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
+app.UseStaticFiles();
 app.UseAuthorization();
 app.UseAuthorization();
 app.MapControllers();

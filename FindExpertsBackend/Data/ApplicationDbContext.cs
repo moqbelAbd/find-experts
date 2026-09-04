@@ -41,8 +41,6 @@ namespace FindExpertsBackend.Data
             base.OnModelCreating(modelBuilder);
 
             // Composite Keys
-            modelBuilder.Entity<ExpertSkill>()
-                .HasKey(es => new { es.ExpertId, es.SkillId });
 
             modelBuilder.Entity<FavoriteConsultant>()
                 .HasKey(fc => new { fc.UserId, fc.ExpertId });
@@ -51,6 +49,58 @@ namespace FindExpertsBackend.Data
             modelBuilder.Entity<Guarantee>()
                 .HasIndex(g => new { g.ClientId, g.ExpertId })
                 .IsUnique();
+
+
+            // ==========================================================
+            // SEED DATA
+            // ==========================================================
+
+            // Seed Identity Roles
+            var adminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var clientRoleId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            var expertRoleId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+
+            modelBuilder.Entity<IdentityRole<Guid>>().HasData(
+                new IdentityRole<Guid> { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "1" },
+                new IdentityRole<Guid> { Id = clientRoleId, Name = "Client", NormalizedName = "CLIENT", ConcurrencyStamp = "2" },
+                new IdentityRole<Guid> { Id = expertRoleId, Name = "Expert", NormalizedName = "EXPERT", ConcurrencyStamp = "3" }
+            );
+
+
+            // Seed Fields
+            modelBuilder.Entity<Field>().HasData(
+                new Field { FieldId = 1, FieldName = "Software Development", FieldDescription = "Building web, mobile, and enterprise software." },
+                new Field { FieldId = 2, FieldName = "UI/UX Design", FieldDescription = "Digital product design, visual branding, and user experience." },
+                new Field { FieldId = 3, FieldName = "Project Management", FieldDescription = "Software lifecycle management and team coaching." },
+                new Field { FieldId = 4, FieldName = "Database & Architecture", FieldDescription = "Relational mapping, data recovery, and schema design." }
+                );
+
+            // 3. Seed Skills (Tied to Field IDs)
+            modelBuilder.Entity<Skill>().HasData(
+                // Software Development Skills
+                new Skill { SkillId = 1, FieldId = 1, SkillName = "Java & Spring Boot" },
+                new Skill { SkillId = 2, FieldId = 1, SkillName = "React & TypeScript" },
+                new Skill { SkillId = 3, FieldId = 1, SkillName = "C# & .NET Core" },
+                new Skill { SkillId = 4, FieldId = 1, SkillName = "PostgreSQL" },
+                new Skill { SkillId = 5, FieldId = 1, SkillName = "Entity Framework" },
+
+                // UI/UX Design Skills
+                new Skill { SkillId = 6, FieldId = 2, SkillName = "Figma" },
+                new Skill { SkillId = 7, FieldId = 2, SkillName = "Visual Branding" },
+                new Skill { SkillId = 8, FieldId = 2, SkillName = "WireFrame & Prototype design" },
+
+                // Project Management Skills
+                new Skill { SkillId = 12, FieldId = 3, SkillName = "Scrum" },
+                new Skill { SkillId = 13, FieldId = 3, SkillName = "Kanban" },
+                new Skill { SkillId = 14, FieldId = 3, SkillName = "Sprint Planning" },
+
+                // Database & Architecture 
+                new Skill { SkillId = 9, FieldId = 4, SkillName = "PostgreSQL" },
+                new Skill { SkillId = 10, FieldId = 4, SkillName = "Draw.io Schema Design" },
+                new Skill { SkillId = 11, FieldId = 4, SkillName = "Entity-Relationship Modeling" }
+
+
+            );
 
 
             // ==========================================================

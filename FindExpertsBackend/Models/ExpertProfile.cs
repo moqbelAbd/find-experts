@@ -19,6 +19,16 @@ namespace FindExpertsBackend.Models
         public int FieldId { get; set; }
 
         public string Bio { get; set; }
+
+        [MaxLength(500)]
+        public string? LinkedInUrl { get; set; }
+
+        [MaxLength(500)]
+        public string? GithubUrl { get; set; }
+
+        [MaxLength(500)]
+        public string? PortfolioUrl { get; set; }
+
         public int? TotalExperienceYears { get; set; }
         public bool ConsultationEnabled { get; set; } = false;
 

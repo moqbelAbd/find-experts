@@ -4,6 +4,7 @@ using FindExpertsBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FindExpertsBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260903065043_Added_All_Models")]
+    partial class Added_All_Models
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,8 +249,8 @@ namespace FindExpertsBackend.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ExperienceYears")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ExpertId")
                         .HasColumnType("uniqueidentifier");
@@ -256,9 +259,6 @@ namespace FindExpertsBackend.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("ExperienceId");
 
@@ -314,22 +314,10 @@ namespace FindExpertsBackend.Migrations
                     b.Property<int>("FieldId")
                         .HasColumnType("int");
 
-                    b.Property<string>("GithubUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("LinkedInUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("PortfolioUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("TotalExperienceYears")
                         .HasColumnType("int");
@@ -352,23 +340,13 @@ namespace FindExpertsBackend.Migrations
 
             modelBuilder.Entity("FindExpertsBackend.Models.ExpertSkill", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ExpertId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("SkillId")
+                    b.Property<int>("SkillId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SkillName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpertId");
+                    b.HasKey("ExpertId", "SkillId");
 
                     b.HasIndex("SkillId");
 
@@ -1139,11 +1117,15 @@ namespace FindExpertsBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FindExpertsBackend.Models.Skill", null)
+                    b.HasOne("FindExpertsBackend.Models.Skill", "Skill")
                         .WithMany("ExpertSkills")
-                        .HasForeignKey("SkillId");
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Expert");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.FavoriteConsultant", b =>

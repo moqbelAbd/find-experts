@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FindExpertsBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260902194139_Adding_All_Models")]
-    partial class Adding_All_Models
+    [Migration("20260904125837_ExpertProfile_and_Skill_update")]
+    partial class ExpertProfile_and_Skill_update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,8 +249,8 @@ namespace FindExpertsBackend.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("ExperienceYears")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("ExpertId")
                         .HasColumnType("uniqueidentifier");
@@ -259,6 +259,9 @@ namespace FindExpertsBackend.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ExperienceId");
 
@@ -314,10 +317,22 @@ namespace FindExpertsBackend.Migrations
                     b.Property<int>("FieldId")
                         .HasColumnType("int");
 
+                    b.Property<string>("GithubUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PortfolioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("TotalExperienceYears")
                         .HasColumnType("int");
@@ -340,13 +355,23 @@ namespace FindExpertsBackend.Migrations
 
             modelBuilder.Entity("FindExpertsBackend.Models.ExpertSkill", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ExpertId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("SkillId")
+                    b.Property<int?>("SkillId")
                         .HasColumnType("int");
 
-                    b.HasKey("ExpertId", "SkillId");
+                    b.Property<string>("SkillName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpertId");
 
                     b.HasIndex("SkillId");
 
@@ -391,6 +416,32 @@ namespace FindExpertsBackend.Migrations
                     b.HasKey("FieldId");
 
                     b.ToTable("Fields");
+
+                    b.HasData(
+                        new
+                        {
+                            FieldId = 1,
+                            FieldDescription = "Building web, mobile, and enterprise software.",
+                            FieldName = "Software Development"
+                        },
+                        new
+                        {
+                            FieldId = 2,
+                            FieldDescription = "Digital product design, visual branding, and user experience.",
+                            FieldName = "UI/UX Design"
+                        },
+                        new
+                        {
+                            FieldId = 3,
+                            FieldDescription = "Software lifecycle management and team coaching.",
+                            FieldName = "Project Management"
+                        },
+                        new
+                        {
+                            FieldId = 4,
+                            FieldDescription = "Relational mapping, data recovery, and schema design.",
+                            FieldName = "Database & Architecture"
+                        });
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.Guarantee", b =>
@@ -714,6 +765,92 @@ namespace FindExpertsBackend.Migrations
                     b.HasIndex("FieldId");
 
                     b.ToTable("Skills");
+
+                    b.HasData(
+                        new
+                        {
+                            SkillId = 1,
+                            FieldId = 1,
+                            SkillName = "Java & Spring Boot"
+                        },
+                        new
+                        {
+                            SkillId = 2,
+                            FieldId = 1,
+                            SkillName = "React & TypeScript"
+                        },
+                        new
+                        {
+                            SkillId = 3,
+                            FieldId = 1,
+                            SkillName = "C# & .NET Core"
+                        },
+                        new
+                        {
+                            SkillId = 4,
+                            FieldId = 1,
+                            SkillName = "PostgreSQL"
+                        },
+                        new
+                        {
+                            SkillId = 5,
+                            FieldId = 1,
+                            SkillName = "Entity Framework"
+                        },
+                        new
+                        {
+                            SkillId = 6,
+                            FieldId = 2,
+                            SkillName = "Figma"
+                        },
+                        new
+                        {
+                            SkillId = 7,
+                            FieldId = 2,
+                            SkillName = "Visual Branding"
+                        },
+                        new
+                        {
+                            SkillId = 8,
+                            FieldId = 2,
+                            SkillName = "WireFrame & Prototype design"
+                        },
+                        new
+                        {
+                            SkillId = 9,
+                            FieldId = 3,
+                            SkillName = "PostgreSQL"
+                        },
+                        new
+                        {
+                            SkillId = 10,
+                            FieldId = 3,
+                            SkillName = "Draw.io Schema Design"
+                        },
+                        new
+                        {
+                            SkillId = 11,
+                            FieldId = 3,
+                            SkillName = "Entity-Relationship Modeling"
+                        },
+                        new
+                        {
+                            SkillId = 12,
+                            FieldId = 3,
+                            SkillName = "Scrum"
+                        },
+                        new
+                        {
+                            SkillId = 13,
+                            FieldId = 3,
+                            SkillName = "Kanban"
+                        },
+                        new
+                        {
+                            SkillId = 14,
+                            FieldId = 4,
+                            SkillName = "Sprint Planning"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -742,6 +879,29 @@ namespace FindExpertsBackend.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            ConcurrencyStamp = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            ConcurrencyStamp = "2",
+                            Name = "Client",
+                            NormalizedName = "CLIENT"
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            ConcurrencyStamp = "3",
+                            Name = "Expert",
+                            NormalizedName = "EXPERT"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -982,15 +1142,11 @@ namespace FindExpertsBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FindExpertsBackend.Models.Skill", "Skill")
+                    b.HasOne("FindExpertsBackend.Models.Skill", null)
                         .WithMany("ExpertSkills")
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SkillId");
 
                     b.Navigation("Expert");
-
-                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.FavoriteConsultant", b =>

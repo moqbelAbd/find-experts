@@ -52,6 +52,7 @@ namespace FindExpertsBackend.Controllers
                 return BadRequest(ApiResponse<string>.FailureResult("User registration failed.", errorList));
             }
 
+            await _userManager.AddToRoleAsync(user, "Client");
             return Ok(ApiResponse<string>.SuccessResult(null, "User registered successfully!"));
         }
 

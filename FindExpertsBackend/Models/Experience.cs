@@ -12,7 +12,9 @@ namespace FindExpertsBackend.Models
         public Guid ExpertId { get; set; }
 
         [Required]
-        public int ExperienceYears { get; set; }
+        public DateTime StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
 
         [Required]
         [MaxLength(150)]

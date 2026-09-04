@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace FindExpertsBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class Adding_All_Models : Migration
+    public partial class Added_All_Models : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -682,6 +684,48 @@ namespace FindExpertsBackend.Migrations
                         principalTable: "ExpertProfiles",
                         principalColumn: "ExpertProfileId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "1", "Admin", "ADMIN" },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "2", "Client", "CLIENT" },
+                    { new Guid("33333333-3333-3333-3333-333333333333"), "3", "Expert", "EXPERT" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Fields",
+                columns: new[] { "FieldId", "FieldDescription", "FieldName" },
+                values: new object[,]
+                {
+                    { 1, "Building web, mobile, and enterprise software.", "Software Development" },
+                    { 2, "Digital product design, visual branding, and user experience.", "UI/UX Design" },
+                    { 3, "Software lifecycle management and team coaching.", "Project Management" },
+                    { 4, "Relational mapping, data recovery, and schema design.", "Database & Architecture" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Skills",
+                columns: new[] { "SkillId", "FieldId", "SkillName" },
+                values: new object[,]
+                {
+                    { 1, 1, "Java & Spring Boot" },
+                    { 2, 1, "React & TypeScript" },
+                    { 3, 1, "C# & .NET Core" },
+                    { 4, 1, "PostgreSQL" },
+                    { 5, 1, "Entity Framework" },
+                    { 6, 2, "Figma" },
+                    { 7, 2, "Visual Branding" },
+                    { 8, 2, "WireFrame & Prototype design" },
+                    { 9, 3, "PostgreSQL" },
+                    { 10, 3, "Draw.io Schema Design" },
+                    { 11, 3, "Entity-Relationship Modeling" },
+                    { 12, 3, "Scrum" },
+                    { 13, 3, "Kanban" },
+                    { 14, 4, "Sprint Planning" }
                 });
 
             migrationBuilder.CreateIndex(
