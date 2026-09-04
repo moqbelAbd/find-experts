@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import axiosClient  from '/src/api/axiosClient.js'
-import "./userProfile.css"
+import "./user-profile.css"
 
 export default function UserProfile() {
     const [profile, setProfile] = useState(null);
@@ -26,16 +27,29 @@ export default function UserProfile() {
     }, []);
 
     const handleLocationSave = async () => {
+        const toastId = toast.loading('Saving location...');
+
         try {
             await axiosClient.put('/User/location', { userLocation: locationInput });
 
             setProfile({ ...profile, userLocation: locationInput });
             setIsEditingLocation(false);
+
+            toast.success('Location updated successfully!', { id: toastId });
         } catch (error) {
+
             console.error("Error saving location:", error);
+
+            const backendData = error.response?.data;
+
+            const errorMessage =
+                backendData?.message ||
+                backendData?.errors?.[0] ||
+                'Failed to update location.';
+
+            toast.error(errorMessage, { id: toastId });
         }
     };
-
     const handleAvatarUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;

@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --primary: #12372A;       /* Primary 900 */
+  --primary: #287A59;       /* Primary 900 */
   --accent: #32956D;        /* Primary 500 */
-  --accent-hover: #287A59;  /* Primary 600 */
+  --accent-hover: #0d5c42;  /* Primary 600 */
 
   /* Layout & Text */
   --bg-main: #F7F9F8;       /* Background */
@@ -136,6 +136,13 @@ section {
   background-color: var(--danger-bg);
 }
 
+.btn:disabled,
+.primary-btn:disabled,
+.accent-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none; /* Prevents all hover effects and clicks */
+}
 /* =========================================
    RESPONSIVE DESIGN
    ========================================= */

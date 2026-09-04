@@ -1,0 +1,21 @@
+.experience-block {
+    background-color: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.position-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.date-group {
+    display: flex;
+    gap: 16px;
+}
