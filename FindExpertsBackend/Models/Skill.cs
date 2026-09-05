@@ -18,6 +18,5 @@ namespace FindExpertsBackend.Models
         [ForeignKey(nameof(FieldId))]
         public virtual Field Field { get; set; }
 
-        public virtual ICollection<ExpertSkill> ExpertSkills { get; set; } = new List<ExpertSkill>();
     }
 }

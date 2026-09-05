@@ -51,6 +51,7 @@ namespace FindExpertsBackend.DTOs
         public string ProjectDescription { get; set; }
         public string? ProjectUrl { get; set; }
         public IFormFile? ImageFile { get; set; } // Handles the uploaded file
+        public string? ExistingImageUrl { get; set; } //Captures the existing image if no new file is uploaded
     }
 
     public class AvailabilityDto

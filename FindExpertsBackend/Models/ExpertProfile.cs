@@ -42,7 +42,7 @@ namespace FindExpertsBackend.Models
         [ForeignKey(nameof(FieldId))]
         public virtual Field Field { get; set; }
 
-        public virtual ConsultationPackage ConsultationPackage { get; set; }
+        public virtual ICollection<ConsultationPackage> ConsultationPackages { get; set; } = new List <ConsultationPackage> ();
         public virtual ICollection<ExpertSkill> ExpertSkills { get; set; } = new List<ExpertSkill>();
         public virtual ICollection<Experience> Experiences { get; set; } = new List<Experience>();
         public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
@@ -50,7 +50,7 @@ namespace FindExpertsBackend.Models
         public virtual ICollection<ServiceInterest> ServiceInterests { get; set; } = new List<ServiceInterest>();
         public virtual ICollection<JobInterest> JobInterests { get; set; } = new List<JobInterest>();
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-        public virtual ICollection<ExpertAvailability> Availabilities { get; set; } = new List<ExpertAvailability>();
+        public virtual ICollection<ExpertAvailability> ExpertAvailabilities { get; set; } = new List<ExpertAvailability>();
 
         [InverseProperty(nameof(Review.Expert))]
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();

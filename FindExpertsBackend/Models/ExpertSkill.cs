@@ -6,7 +6,7 @@ namespace FindExpertsBackend.Models
     public class ExpertSkill
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid ExpertSkillId { get; set; } = Guid.NewGuid();
 
         public Guid ExpertId { get; set; }
         public string SkillName { get; set; }

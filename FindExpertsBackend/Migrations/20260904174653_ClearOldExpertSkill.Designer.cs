@@ -4,6 +4,7 @@ using FindExpertsBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FindExpertsBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260904174653_ClearOldExpertSkill")]
+    partial class ClearOldExpertSkill
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,7 +232,8 @@ namespace FindExpertsBackend.Migrations
 
                     b.HasKey("ConsultationPackageId");
 
-                    b.HasIndex("ExpertId");
+                    b.HasIndex("ExpertId")
+                        .IsUnique();
 
                     b.ToTable("ConsultationPackages");
                 });
@@ -358,6 +362,9 @@ namespace FindExpertsBackend.Migrations
                     b.Property<Guid>("ExpertId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("SkillId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SkillName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -365,6 +372,8 @@ namespace FindExpertsBackend.Migrations
                     b.HasKey("ExpertSkillId");
 
                     b.HasIndex("ExpertId");
+
+                    b.HasIndex("SkillId");
 
                     b.ToTable("ExpertSkills");
                 });
@@ -1076,8 +1085,8 @@ namespace FindExpertsBackend.Migrations
             modelBuilder.Entity("FindExpertsBackend.Models.ConsultationPackage", b =>
                 {
                     b.HasOne("FindExpertsBackend.Models.ExpertProfile", "Expert")
-                        .WithMany("ConsultationPackages")
-                        .HasForeignKey("ExpertId")
+                        .WithOne("ConsultationPackage")
+                        .HasForeignKey("FindExpertsBackend.Models.ConsultationPackage", "ExpertId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1098,7 +1107,7 @@ namespace FindExpertsBackend.Migrations
             modelBuilder.Entity("FindExpertsBackend.Models.ExpertAvailability", b =>
                 {
                     b.HasOne("FindExpertsBackend.Models.ExpertProfile", "Expert")
-                        .WithMany("ExpertAvailabilities")
+                        .WithMany("Availabilities")
                         .HasForeignKey("ExpertId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1132,6 +1141,10 @@ namespace FindExpertsBackend.Migrations
                         .HasForeignKey("ExpertId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FindExpertsBackend.Models.Skill", null)
+                        .WithMany("ExpertSkills")
+                        .HasForeignKey("SkillId");
 
                     b.Navigation("Expert");
                 });
@@ -1393,15 +1406,16 @@ namespace FindExpertsBackend.Migrations
 
             modelBuilder.Entity("FindExpertsBackend.Models.ExpertProfile", b =>
                 {
+                    b.Navigation("Availabilities");
+
                     b.Navigation("Bookings");
 
                     b.Navigation("Certificates");
 
-                    b.Navigation("ConsultationPackages");
+                    b.Navigation("ConsultationPackage")
+                        .IsRequired();
 
                     b.Navigation("Experiences");
-
-                    b.Navigation("ExpertAvailabilities");
 
                     b.Navigation("ExpertSkills");
 
@@ -1440,6 +1454,11 @@ namespace FindExpertsBackend.Migrations
 
                     b.Navigation("ServicePost")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FindExpertsBackend.Models.Skill", b =>
+                {
+                    b.Navigation("ExpertSkills");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.User", b =>

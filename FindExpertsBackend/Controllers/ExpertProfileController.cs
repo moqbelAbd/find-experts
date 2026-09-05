@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
-using FindExpertsBackend.Models; // Adjust to your models namespace
+using FindExpertsBackend.Models; 
 using System.Security.Claims;
 using System.Globalization;
 
@@ -33,7 +33,7 @@ namespace FindExpertsBackend.Controllers
             // 1. Check if user already has an expert profile
             var existingProfile = await _context.ExpertProfiles.FirstOrDefaultAsync(ep => ep.UserId == userId);
             if (existingProfile != null)
-                return BadRequest(ApiResponse<string>.FailureResult("User is already an expert."));
+                return BadRequest(ApiResponse<string>.FailureResult("User is already has expert profile."));
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -165,6 +165,81 @@ namespace FindExpertsBackend.Controllers
                 await transaction.RollbackAsync();
                 return StatusCode(500, ApiResponse<string>.FailureResult("An error occurred while saving the profile.", new List<string> { ex.Message }));
             }
+        }
+
+        [HttpGet("{expertProfileId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetExpertProfile(Guid expertProfileId)
+        {
+            var profile = await _context.ExpertProfiles
+                .Include(ep => ep.User)
+                .Include(ep => ep.Field)
+                .Include(ep => ep.ExpertSkills) 
+                .Include(ep => ep.Experiences)
+                .Include(ep => ep.Certificates)
+                .Include(ep => ep.Projects)
+                .Include(ep => ep.ConsultationPackages)
+                .FirstOrDefaultAsync(ep => ep.ExpertProfileId == expertProfileId);
+
+            if (profile == null)
+                return NotFound(ApiResponse<string>.FailureResult("Expert profile not found."));
+
+            var response = new ExpertProfileResponseDto
+            {
+                ExpertProfileId = profile.ExpertProfileId,
+                UserId = profile.UserId,
+                FullName = profile.User?.FullName.Trim(),
+                ProfilePicture = profile.User?.Avatar,
+                JobTitle = profile.JobTitle,
+                FieldId = profile.FieldId,
+                FieldName = profile.Field?.FieldName ?? "Unknown Field",
+                Bio = profile.Bio,
+                TotalExperienceYears = profile.TotalExperienceYears,
+                ConsultationEnabled = profile.ConsultationEnabled,
+                LinkedInUrl = profile.LinkedInUrl,
+                GithubUrl = profile.GithubUrl,
+                PortfolioUrl = profile.PortfolioUrl,
+
+                Skills = profile.ExpertSkills.Select(s => s.SkillName).ToList(),
+
+                Experiences = profile.Experiences.Select(e => new ExperienceResponseDto
+                {
+                    JobTitle = e.JobTitle,
+                    CompanyName = e.CompanyName,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate
+                }).ToList(),
+
+                Certificates = profile.Certificates.Select(c => new CertificateResponseDto
+                {
+                    CertificateName = c.CertificateName,
+                    Issuer = c.Issuer,
+                    IssueDate = c.IssueDate
+                }).ToList(),
+
+                Projects = profile.Projects.Select(p => new ProjectResponseDto
+                {
+                    ProjectTitle = p.ProjectTitle,
+                    ProjectDescription = p.ProjectDescription,
+                    ProjectUrl = p.ProjectUrl,
+                    ProjectImage = p.ProjectImage
+                }).ToList(),
+
+                Availabilities = profile.ExpertAvailabilities.Select(a => new AvailabilityResponseDto
+                {
+                    DayOfWeek = a.DayOfWeek,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime
+                }).ToList(),
+
+                Packages = profile.ConsultationPackages.Select(p => new PackageResponseDto
+                {
+                    Duration = p.Duration,
+                    Price = p.Price
+                }).ToList()
+            };
+
+            return Ok(ApiResponse<ExpertProfileResponseDto>.SuccessResult(response));
         }
     }
 }
