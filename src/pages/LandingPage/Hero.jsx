@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react';
+import {Link, NavLink} from 'react-router-dom';
 import './hero.css';
 
 export default function Hero() {
@@ -11,27 +12,27 @@ export default function Hero() {
                 </h1>
 
                 <p className="hero-subtitle">
-                    Ask a question, find a professional, request a service, or book a paid one-on-one consultation.
+                    Ask a question, find a professional, request a service, or book a paid one to one consultation.
                 </p>
 
-                <div className="hero-search-wrapper">
-                    <div className="hero-search-input-group">
-                        <Search className="hero-search-icon" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Search by skill, field, or name..."
-                            className="hero-input"
-                        />
-                    </div>
-                    <button className="btn hero-btn hero-search-btn">
-                        Search
-                    </button>
-                </div>
+                {/*<div className="hero-search-wrapper">*/}
+                {/*    <div className="hero-search-input-group">*/}
+                {/*        <Search className="hero-search-icon" size={20} />*/}
+                {/*        <input*/}
+                {/*            type="text"*/}
+                {/*            placeholder="Search by skill, field, or name..."*/}
+                {/*            className="hero-input"*/}
+                {/*        />*/}
+                {/*    </div>*/}
+                {/*    <button className="btn hero-btn hero-search-btn">*/}
+                {/*        Search*/}
+                {/*    </button>*/}
+                {/*</div>*/}
 
                 <div className="hero-actions">
-                    <button className="btn hero-btn">
-                        Find an Expert
-                    </button>
+                    <NavLink to="/find-experts"  className="btn primary-btn">
+                        Find Experts
+                    </NavLink>
                     <button className="btn hero-outline-btn">
                         Post What You Need
                     </button>

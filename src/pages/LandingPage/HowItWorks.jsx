@@ -1,5 +1,5 @@
 import "./howItWorks.css"
-import { Link } from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 import {useState} from "react";
 import { ChevronDown } from 'lucide-react';
 
@@ -120,9 +120,9 @@ export default function HowItWorks() {
                 </div>
 
                 <div className="hiw-action-wrapper">
-                    <Link to="/experts" className="btn primary-btn">
-                        Find an Expert
-                    </Link>
+                    <NavLink to="/find-experts"  className="btn primary-btn">
+                        Find Experts
+                    </NavLink>
                 </div>
             </section>
 
@@ -264,7 +264,7 @@ export default function HowItWorks() {
                     className="faq-section-toggle"
                     onClick={() => setIsSectionOpen(!isSectionOpen)}
                 >
-                    <h2 className="section-title" style={{ margin: 0 }}>Frequently asked questions</h2>
+                    <h3 className="section-title" style={{ margin: 0 }}>Frequently asked questions</h3>
                     <ChevronDown
                         className={`faq-section-icon ${isSectionOpen ? 'rotate' : ''}`}
                         size={28}

@@ -17,7 +17,7 @@ export default function Navbar() {
             <div className="nav-left">
                 <Link to="/" className="nav-brand" onClick={closeMenu}>
                     <div className="logo-box">RE</div>
-                    Rent an Expert
+                    Find Experts
                 </Link>
             </div>
 
@@ -27,7 +27,7 @@ export default function Navbar() {
                         <NavLink to="/dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Home
                         </NavLink>
-                        <NavLink to="/experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                        <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Find Experts
                         </NavLink>
                         <NavLink to="/posts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
@@ -42,7 +42,7 @@ export default function Navbar() {
                         <NavLink to="/how-it-works" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             How It Works
                         </NavLink>
-                        <NavLink to="/experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                        <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Find Experts
                         </NavLink>
                     </>

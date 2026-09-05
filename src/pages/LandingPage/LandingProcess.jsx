@@ -11,7 +11,7 @@ export default function LandingProcess() {
 
             <div className="landing-steps-grid">
                 <div className="landing-step">
-                    <div className="step-circle">1</div>
+                    <div className="process-step-circle">1</div>
                     <div className="step-content">
                         <h3>Find the right expert</h3>
                         <p>Browse professionals by field, rating, price, and availability. Every expert builds their own profile — no algorithmic black box.</p>
@@ -19,7 +19,7 @@ export default function LandingProcess() {
                 </div>
 
                 <div className="landing-step">
-                    <div className="step-circle">2</div>
+                    <div className="process-step-circle">2</div>
                     <div className="step-content">
                         <h3>Connect your way</h3>
                         <p>Ask a question, post a service request, list a job, or book a paid consultation directly with the expert you want.</p>
@@ -27,7 +27,7 @@ export default function LandingProcess() {
                 </div>
 
                 <div className="landing-step">
-                    <div className="step-circle">3</div>
+                    <div className="process-step-circle">3</div>
                     <div className="step-content">
                         <h3>Get real outcomes</h3>
                         <p>Get answers, hire help, or book a consultation session. Leave a review and a guarantee to help the community grow.</p>

@@ -21,9 +21,9 @@
     gap: 20px;
 }
 
-.step-circle {
-    width: 60px;
-    height: 60px;
+.process-step-circle {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: #d8f8ea;
     color: var(--primary);
