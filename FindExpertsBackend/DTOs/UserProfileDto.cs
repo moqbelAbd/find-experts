@@ -6,7 +6,8 @@
         public string Email { get; set; }
         public string Avatar { get; set; }
         public string UserLocation { get; set; }
-        public bool HasExpertProfile { get; set; }
+        public Guid? ExpertProfileId { get; set; }
+
     }
 
     public class UpdateLocationDto

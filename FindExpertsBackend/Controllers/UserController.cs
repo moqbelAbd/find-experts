@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.IO;
+using System.Reflection.Metadata;
 
 namespace FindExpertsBackend.Controllers
 {
@@ -15,21 +16,27 @@ namespace FindExpertsBackend.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(ApplicationDbContext context, IWebHostEnvironment environment)
+        public UserController(ApplicationDbContext context, IWebHostEnvironment environment, ILogger<UserController> logger)
         {
             _context = context;
             _environment = environment;
+            _logger = logger;
         }
 
-        [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile()
+        [AllowAnonymous]
+        [HttpGet("profile/{userID?}")]
+        public async Task<IActionResult> GetProfile(string? userID )
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var targetUserId = userID ?? currentUserId;
 
             var user = await _context.Users
                 .Include(u => u.ExpertProfile)
-                .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+                .FirstOrDefaultAsync(u => u.Id.ToString() == targetUserId);
+ 
 
             if (user == null) return NotFound(ApiResponse<object>.FailureResult("User not found"));
 
@@ -39,7 +46,7 @@ namespace FindExpertsBackend.Controllers
                 Email = user.Email,
                 Avatar = user.Avatar,
                 UserLocation = user.UserLocation,
-                HasExpertProfile = user.ExpertProfile != null
+                ExpertProfileId = user.ExpertProfile?.ExpertProfileId
             };
 
             return Ok(ApiResponse<UserProfileDto>.SuccessResult(dto, "Profile retrieved successfully."));
