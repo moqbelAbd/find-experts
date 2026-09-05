@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link ,useParams} from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axiosClient  from '/src/api/axiosClient.js'
 import "./user-profile.css"
@@ -11,14 +11,23 @@ export default function UserProfile() {
     const [locationInput, setLocationInput] = useState('');
     const fileInputRef = useRef(null);
 
+    const {userId} = useParams();
+
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axiosClient.get('/User/profile');
+                // If there's an ID in the URL, append it. Otherwise, call the base endpoint.
+                const endpoint = userId ? `/User/profile/${userId}` : `/User/profile`;
+                const response = await axiosClient.get(endpoint);
                 setProfile(response.data.data);
+
+                // ... set profile state
             } catch (error) {
-                console.error("Error fetching profile:", error);
-            } finally {
+                // If the backend returns 401 (guest with no ID), redirect to login
+                if (error.response?.status === 401) {
+                    window.location.href = '/login';
+                }
+                }finally {
                 setLoading(false);
             }
         };
@@ -83,12 +92,17 @@ export default function UserProfile() {
                     {/* Using your global section-title */}
                     <h1 className="section-title" style={{ marginBottom: 0 }}>My Profile</h1>
 
-                    {!profile.hasExpertProfile && (
-
-                        <Link to="/become-expert" className="btn primary-btn">
-                        Go Expert
+                    {profile.expertProfileId ? (
+                        <Link to={`/expert/${profile.expertProfileId}`} className="btn primary-btn">
+                            View Expert Profile
                         </Link>
-                        )}
+                    ) : (
+                        <Link to="/become-expert" className="btn outline-btn">
+                            Go Expert
+                        </Link>
+                    )}
+
+
                 </div>
 
                 <div className="profile-content">

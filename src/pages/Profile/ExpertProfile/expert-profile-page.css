@@ -1,0 +1,299 @@
+
+.expert-profile-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+.expert-section{
+  margin-bottom: 20px;
+}
+
+/* Header Section */
+.expert-header-layout {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.expert-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+}
+
+.expert-name {
+    margin: 0 0 4px 0;
+    color: var(--text-main);
+}
+
+.expert-title {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+}
+
+.expert-field {
+    margin: 0;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.expert-bio {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Social Links & Edit Inputs */
+.expert-social-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.social-icon-link {
+    color: var(--primary);
+    transition: opacity 0.2s;
+}
+
+.social-icon-link:hover {
+    opacity: 0.8;
+}
+
+.edit-link-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* List Items (Experience, Availability, etc.) */
+.list-section-header {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+}
+
+.availability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    justify-self: center;
+    width: 100%;
+}
+
+.availability-card {
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: #fafafa;
+    text-align: center;
+}
+.list-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.list-item-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.list-item-content h4 {
+    margin: 0 0 4px 0;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: row;
+}
+
+.list-item-content p {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.list-item-content .item-subtitle {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.list-item-content .item-date {
+    font-size: 0.85rem;
+}
+
+/* Projects Grid */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.project-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    position: relative;
+}
+
+.project-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.project-details {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Consultation Packages Grid */
+.package-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.package-card {
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    background-color: #f0fdf4;
+    position: relative;
+}
+
+.package-price {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 0 0 16px 0;
+    color: var(--primary);
+}
+
+/* Edit Actions */
+.edit-actions-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.icon-delete-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.icon-delete-btn:hover {
+    background: #fca5a5;
+}
+
+.project-card .icon-delete-btn,
+.package-card .icon-delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.social-icon-green {
+    color: #16a34a; /* Modern, professional green */
+}
+
+/* Header Rows for Sections */
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-header-row.mb-16 {
+    margin-bottom: 16px;
+}
+
+.section-header-row .list-section-header {
+    margin-bottom: 0; /* Overrides default margin when inside flex row */
+}
+
+/* Add Buttons */
+.btn.add-btn {
+    padding: 4px 12px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.skill-delete-icon {
+    cursor: pointer;
+    color: #ef4444;
+    transition: opacity 0.2s;
+}
+
+.skill-delete-icon:hover {
+    opacity: 0.7;
+}
+
+/* Empty States */
+.empty-state-text {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Availability Section Margin */
+.availability-section {
+    margin-bottom: 40px;
+}
+
+/* Cleaned up Project Card Styles */
+.project-details h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+}
+
+.project-details p {
+    margin: 0 0 24px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    flex: 1;
+}
+
+.project-link-btn {
+    text-align: center;
+    text-decoration: none;
+}
+
+/* Cleaned up Package Card Styles */
+.package-card h4 {
+    margin: 0 0 8px 0;
+    color: var(--text-main);
+}

@@ -10,6 +10,7 @@ import UserProfile from "./pages/Profile/UserProfile.jsx";
 import LandingPage from "./pages/LandingPage/LandingPage.jsx";
 import HowItWorks from "./pages/LandingPage/HowItWorks.jsx";
 import BecomeExpert from "./pages/Profile/ExpertProfile/BecomeExpert/BecomeExpert.jsx";
+import ExpertProfilePage from "./pages/Profile/ExpertProfile/ExpertProfilePage.jsx";
 
 export default function App() {
     return (
@@ -27,11 +28,13 @@ export default function App() {
                         {/* Public Routes */}
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/how-it-works" element={<HowItWorks />} />
+                        <Route path="/profile" element={<UserProfile />} />
+                        <Route path="/profile/:userId" element={<UserProfile />} />
+                        <Route path="/expert/:expertId" element={<ExpertProfilePage />} />
 
                         {/* Protected Routes Group */}
                         <Route element={<ProtectedRoute />}>
                             <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/profile" element={<UserProfile />} />
                             <Route path="/become-expert" element={<BecomeExpert />} />
                         </Route>
 

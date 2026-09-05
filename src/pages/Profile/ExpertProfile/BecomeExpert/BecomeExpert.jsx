@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from "react-hot-toast";
 import axiosClient from "../../../../api/axiosClient.js";
 import './become-expert.css';
@@ -11,6 +12,7 @@ import ExpertProjects from "./ExpertProjects.jsx";
 import ExpertConsultation from "./ExpertConsultation.jsx";
 
 export default function BecomeExpert() {
+    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 6;
 
@@ -18,6 +20,7 @@ export default function BecomeExpert() {
     const [formData, setFormData] = useState({
         jobTitle: '',
         fieldId: '',
+        customField: '',
         bio: '',
         linkedInUrl: '',
         githubUrl: '',
@@ -47,7 +50,11 @@ export default function BecomeExpert() {
 
         // Append standard fields
         data.append('JobTitle', formData.jobTitle);
-        data.append('FieldId', formData.fieldId);
+        if (formData.fieldId && formData.fieldId !== 'other') {
+            data.append('FieldId', formData.fieldId);
+        } else if (formData.customField) {
+            data.append('CustomField', formData.customField);
+        }
         data.append('Bio', formData.bio);
         if (formData.linkedInUrl) data.append('LinkedInUrl', formData.linkedInUrl);
         if (formData.githubUrl) data.append('GithubUrl', formData.githubUrl);
@@ -102,14 +109,13 @@ export default function BecomeExpert() {
 
         try {
             // Send multipart/form-data request
-            await axiosClient.post('/ExpertProfile', data, {
+            const response = await axiosClient.post('/ExpertProfile', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
             toast.success('Expert profile activated!', { id: toastId });
 
-            // Redirect user to their new profile page
-            // navigate('/profile');
+            navigate(`/expert/${response.data.data}`);
 
         } catch (error) {
             console.error("Error creating expert profile:", error);

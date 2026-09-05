@@ -30,6 +30,8 @@ export default function ExpertExperience({ formData, updateFormData, nextStep, p
         exp.jobTitle.trim() && exp.companyName.trim() && exp.from
     );
 
+    const today = new Date().toISOString().split('T')[0];
+
     return (
         <div className="step-content">
             <h2 className="step-title">Experience</h2>
@@ -61,12 +63,25 @@ export default function ExpertExperience({ formData, updateFormData, nextStep, p
                     <div className="date-group">
                         <div className="form-group flex-1">
                             <label>From</label>
-                            <input type="date" value={exp.from} onChange={(e) => updateExperience(index, 'from', e.target.value)} className="form-input" />
+                            <input
+                                type="date"
+                                value={exp.from}
+                                onChange={(e) => updateExperience(index, 'from', e.target.value)}
+                                className="form-input"
+                                max={today}
+                            />
                         </div>
                         <div className="form-group flex-1">
                             <label>To</label>
-                            <input type="date" value={exp.to} onChange={(e) => updateExperience(index, 'to', e.target.value)} className="form-input" />
+                            <input
+                                type="date"
+                                value={exp.to}
+                                onChange={(e) => updateExperience(index, 'to', e.target.value)}
+                                className="form-input"
+                                max={today}
+                            />
                         </div>
+
                     </div>
                 </div>
             ))}

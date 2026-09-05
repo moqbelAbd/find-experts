@@ -46,17 +46,41 @@ export default function ExpertInfo({ formData, updateFormData, nextStep }) {
                 <select
                     name="fieldId"
                     value={formData.fieldId}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setFormData(prev => ({
+                            ...prev,
+                            fieldId: val,
+                            // Clear the custom text if they switch back to a predefined field
+                            customField: val === 'other' ? prev.customField : ''
+                        }));
+                    }}
                     className="form-input"
                     disabled={isLoading}
                 >
                     <option value="">{isLoading ? "Loading fields..." : "Select a field..."}</option>
+
+                    <option value="other">Other (Please specify)</option>
                     {fields.map((field) => (
                         <option key={field.fieldId} value={field.fieldId}>
                             {field.fieldName}
                         </option>
                     ))}
                 </select>
+
+                {/* Conditionally render custom input when "Other" is selected */}
+                {formData.fieldId === 'other' && (
+                    <input
+                        type="text"
+                        name="customField"
+                        value={formData.customField || ''}
+                        onChange={handleChange}
+                        placeholder="Enter your custom field name"
+                        className="form-input"
+                        style={{ marginTop: '8px' }}
+                        required
+                    />
+                )}
             </div>
 
             <div className="form-group">
@@ -67,7 +91,7 @@ export default function ExpertInfo({ formData, updateFormData, nextStep }) {
 
             <div className="form-group">
                 <label>Years of experience</label>
-                <input type="number" name="totalExperienceYears" value={formData.totalExperienceYears} onChange={handleChange} className="form-input" />
+                <input type="number" name="totalExperienceYears" value={formData.totalExperienceYears} onChange={handleChange} className="form-input" min={0} max={50}/>
             </div>
 
             <hr className="section-divider" style={{ margin: '32px 0' }} />
@@ -124,7 +148,7 @@ export default function ExpertInfo({ formData, updateFormData, nextStep }) {
                     onClick={nextStep}
                     className="btn primary-btn full-width"
                     // Prevent continuing if required fields are empty
-                    disabled={!formData.jobTitle || !formData.fieldId}
+                    disabled={!formData.jobTitle || !formData.fieldId || !formData.bio}
                 >
                     Continue
                 </button>
