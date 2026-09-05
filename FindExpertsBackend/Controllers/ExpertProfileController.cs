@@ -26,30 +26,75 @@ namespace FindExpertsBackend.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetExpertsProfiles()
+        public async Task<IActionResult> GetExpertsProfiles(
+            [FromQuery] string? search,
+            [FromQuery] string? fieldId,
+            [FromQuery] bool? hasGuarantees,
+            [FromQuery] decimal? maxPrice,
+            [FromQuery] int? minGuarantees,
+            [FromQuery] int? minRating)
         {
-            var profiles = await _context.ExpertProfiles
+            var query = _context.ExpertProfiles
                 .Include(ep => ep.User)
                 .Include(ep => ep.Field)
                 .Include(ep => ep.ExpertSkills)
-                .Include(ep => ep.Experiences)
-                .Include(ep => ep.Certificates)
-                .Include(ep => ep.Projects)
+                .Include(ep => ep.Reviews)
+                .Include(ep => ep.Guarantees)
                 .Include(ep => ep.ConsultationPackages)
-                .Include(ep => ep.ExpertAvailabilities)
                   .AsSplitQuery()
-                   .ToListAsync();
+                   .AsQueryable();
 
-            var response = new List<ExpertProfileResponseDto>();
-
-            foreach (var item in profiles)
+            // 1. Search by User Name or Field Name
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                response.Add(new ExpertProfileResponseDto
+                var lowerSearch = search.ToLower();
+                query = query.Where(ep =>
+                    (ep.User != null && ep.User.FullName.ToLower().Contains(lowerSearch)) ||
+                    (ep.User != null && ep.User.UserName.ToLower().Contains(lowerSearch)) ||
+                    (ep.User != null && ep.User.UserLocation.ToLower().Contains(lowerSearch)) ||
+                    (ep.FieldName.ToLower().Contains(lowerSearch))||
+                    (ep.JobTitle.ToLower().Contains(lowerSearch)));
+            }
+
+            // 2. Filter by Field 
+            if (!string.IsNullOrWhiteSpace(fieldId) && int.TryParse(fieldId, out int parsedFieldId))
+            {
+                query = query.Where(ep => ep.FieldId == parsedFieldId);
+            }
+
+            // 3. Filter by Rating
+            if (minRating.HasValue && minRating > 0)
+            {
+                query = query.Where(ep => ep.Reviews.Any() && ep.Reviews.Average(r => r.Rating)  >= minRating);
+            }
+            // 3. Filter by Guarantees
+            if (hasGuarantees == true)
+            {
+                query = query.Where(ep => ep.Guarantees.Any());
+            }
+            if (minGuarantees.HasValue && minGuarantees > 0 )
+            {
+                query = query.Where(ep => ep.Guarantees.Count() >= minGuarantees);
+            }
+
+            // 4. Filter by Max Price
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(ep => ep.ConsultationPackages.Any() && ep.ConsultationPackages.Min(p => p.Price) <= maxPrice);
+            }
+
+            //var response = new List<ExpertsProfilesResponseDto>();
+
+            var profiles = await query.ToListAsync();
+
+
+               var response = profiles.Select(item => new ExpertsProfilesResponseDto
                 {
                     ExpertProfileId = item.ExpertProfileId,
                     UserId = item.UserId,
                     FullName = item.User?.FullName?.Trim() ?? item.User?.UserName?.Split('@')[0] ?? "Unknown User",
-                    ProfilePicture = item.User?.Avatar,
+                    Location = item.User?.UserLocation,
+                   ProfilePicture = item.User?.Avatar,
                     JobTitle = item.JobTitle,
                     FieldId = item.FieldId,
                     FieldName = !string.IsNullOrWhiteSpace(item.FieldName)
@@ -58,53 +103,14 @@ namespace FindExpertsBackend.Controllers
                     Bio = item.Bio,
                     TotalExperienceYears = item.TotalExperienceYears,
                     ConsultationEnabled = item.ConsultationEnabled,
-                    LinkedInUrl = item.LinkedInUrl,
-                    GithubUrl = item.GithubUrl,
-                    PortfolioUrl = item.PortfolioUrl,
+                    Guarantees = item.Guarantees.Count(),
+                    NumberOfReviews = item.Reviews.Count(),
+                    Rating = item.Reviews != null && item.Reviews.Any() ? Math.Round(item.Reviews.Average(r => r.Rating), 1) : 0,
+                    StartingPrice = item.ConsultationPackages?.Any() == true ? item.ConsultationPackages.Min(p => p.Price) : null,
+                   Skills = item.ExpertSkills?.Select(s => s.SkillName).ToList() ?? new List<string>()
+               }).ToList();
 
-                    Skills = item.ExpertSkills.Select(s => s.SkillName).ToList(),
-
-                    Experiences = item.Experiences.Select(e => new ExperienceResponseDto
-                    {
-                        JobTitle = e.JobTitle,
-                        CompanyName = e.CompanyName,
-                        StartDate = e.StartDate,
-                        EndDate = e.EndDate
-                    }).ToList(),
-
-                    Certificates = item.Certificates.Select(c => new CertificateResponseDto
-                    {
-                        CertificateName = c.CertificateName,
-                        Issuer = c.Issuer,
-                        IssueDate = c.IssueDate
-                    }).ToList(),
-
-                    Projects = item.Projects.Select(p => new ProjectResponseDto
-                    {
-                        ProjectTitle = p.ProjectTitle,
-                        ProjectDescription = p.ProjectDescription,
-                        ProjectUrl = p.ProjectUrl,
-                        ProjectImage = p.ProjectImage
-                    }).ToList(),
-
-                    Availabilities = item.ExpertAvailabilities.Select(a => new AvailabilityResponseDto
-                    {
-                        DayOfWeek = a.DayOfWeek,
-                        StartTime = a.StartTime,
-                        EndTime = a.EndTime
-                    }).ToList(),
-
-                    Packages = item.ConsultationPackages.Select(p => new PackageResponseDto
-                    {
-                        Duration = p.Duration,
-                        Price = p.Price
-                    }).ToList()
-                }
-
-            );
-            }
-
-            return Ok(ApiResponse<List<ExpertProfileResponseDto>>.SuccessResult(response));
+            return Ok(ApiResponse<List<ExpertsProfilesResponseDto>>.SuccessResult(response));
         }
 
 
