@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using FindExpertsBackend.Data;
+﻿using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models; 
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FindExpertsBackend.Controllers
 {
@@ -51,7 +52,9 @@ namespace FindExpertsBackend.Controllers
                     ProfilePicture = item.User?.Avatar,
                     JobTitle = item.JobTitle,
                     FieldId = item.FieldId,
-                    FieldName = item.Field?.FieldName ?? "Unknown Field",
+                    FieldName = !string.IsNullOrWhiteSpace(item.FieldName)
+                    ? item.FieldName
+                    : (item.Field?.FieldName ?? "Unknown Field"),
                     Bio = item.Bio,
                     TotalExperienceYears = item.TotalExperienceYears,
                     ConsultationEnabled = item.ConsultationEnabled,
@@ -105,6 +108,86 @@ namespace FindExpertsBackend.Controllers
         }
 
 
+      
+        [HttpGet("{expertProfileId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetExpertProfile(Guid expertProfileId)
+        {
+            var profile = await _context.ExpertProfiles
+                .Include(ep => ep.User)
+                .Include(ep => ep.Field)
+                .Include(ep => ep.ExpertSkills) 
+                .Include(ep => ep.Experiences)
+                .Include(ep => ep.Certificates)
+                .Include(ep => ep.Projects)
+                .Include(ep => ep.ConsultationPackages)
+                .Include(ep => ep.ExpertAvailabilities)
+                .FirstOrDefaultAsync(ep => ep.ExpertProfileId == expertProfileId);
+
+            if (profile == null)
+                return NotFound(ApiResponse<string>.FailureResult("Expert profile not found."));
+
+            var response = new ExpertProfileResponseDto
+            {
+                ExpertProfileId = profile.ExpertProfileId,
+                UserId = profile.UserId,
+                FullName = profile.User?.FullName.Trim(),
+                ProfilePicture = profile.User?.Avatar,
+                JobTitle = profile.JobTitle,
+                FieldId = profile.FieldId,
+                FieldName = !string.IsNullOrWhiteSpace(profile.FieldName)
+                    ? profile.FieldName
+                    : (profile.Field?.FieldName ?? "Unknown Field"),
+                Bio = profile.Bio,
+                TotalExperienceYears = profile.TotalExperienceYears,
+                ConsultationEnabled = profile.ConsultationEnabled,
+                LinkedInUrl = profile.LinkedInUrl,
+                GithubUrl = profile.GithubUrl,
+                PortfolioUrl = profile.PortfolioUrl,
+
+                Skills = profile.ExpertSkills.Select(s => s.SkillName).ToList(),
+
+                Experiences = profile.Experiences.Select(e => new ExperienceResponseDto
+                {
+                    JobTitle = e.JobTitle,
+                    CompanyName = e.CompanyName,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate
+                }).ToList(),
+
+                Certificates = profile.Certificates.Select(c => new CertificateResponseDto
+                {
+                    CertificateName = c.CertificateName,
+                    Issuer = c.Issuer,
+                    IssueDate = c.IssueDate
+                }).ToList(),
+
+                Projects = profile.Projects.Select(p => new ProjectResponseDto
+                {
+                    ProjectTitle = p.ProjectTitle,
+                    ProjectDescription = p.ProjectDescription,
+                    ProjectUrl = p.ProjectUrl,
+                    ProjectImage = p.ProjectImage
+                }).ToList(),
+
+                Availabilities = profile.ExpertAvailabilities.Select(a => new AvailabilityResponseDto
+                {
+                    DayOfWeek = a.DayOfWeek,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime
+                }).ToList(),
+
+                Packages = profile.ConsultationPackages.Select(p => new PackageResponseDto
+                {
+                    Duration = p.Duration,
+                    Price = p.Price
+                }).ToList()
+            };
+
+            return Ok(ApiResponse<ExpertProfileResponseDto>.SuccessResult(response));
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateExpertProfile([FromForm] CreateExpertProfileDto dto)
         {
@@ -118,6 +201,25 @@ namespace FindExpertsBackend.Controllers
                 return BadRequest(ApiResponse<string>.FailureResult("User is already has expert profile."));
 
             using var transaction = await _context.Database.BeginTransactionAsync();
+
+            // Determine the FieldName before saving
+            string finalFieldName;
+            if (dto.FieldId.HasValue && dto.FieldId > 0)
+            {
+                var dbField = await _context.Fields.FindAsync(dto.FieldId);
+                if (dbField == null) return BadRequest(ApiResponse<string>.FailureResult("Invalid field selection."));
+                finalFieldName = dbField.FieldName;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.CustomField))
+            {
+                finalFieldName = dto.CustomField.Trim();
+                dto.FieldId = null; // Ensure the foreign key is null in the database
+            }
+            else
+            {
+                return BadRequest(ApiResponse<string>.FailureResult("You must select a predefined field or enter a custom one."));
+            }
+
             try
             {
                 // 2. Create the main Expert Profile
@@ -126,9 +228,10 @@ namespace FindExpertsBackend.Controllers
                     UserId = userId,
                     JobTitle = dto.JobTitle,
                     FieldId = dto.FieldId,
+                    FieldName = finalFieldName,
                     Bio = dto.Bio,
-                    LinkedInUrl = dto.LinkedInUrl, 
-                    GithubUrl = dto.GithubUrl,     
+                    LinkedInUrl = dto.LinkedInUrl,
+                    GithubUrl = dto.GithubUrl,
                     PortfolioUrl = dto.PortfolioUrl,
                     TotalExperienceYears = dto.TotalExperienceYears,
                     ConsultationEnabled = dto.ConsultationEnabled,
@@ -159,7 +262,7 @@ namespace FindExpertsBackend.Controllers
                         ExpertId = expertProfile.ExpertProfileId,
                         JobTitle = exp.JobTitle,
                         CompanyName = exp.CompanyName,
-                        StartDate = exp.From, 
+                        StartDate = exp.From,
                         EndDate = exp.To
                     });
                 }
@@ -249,81 +352,6 @@ namespace FindExpertsBackend.Controllers
             }
         }
 
-        [HttpGet("{expertProfileId}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetExpertProfile(Guid expertProfileId)
-        {
-            var profile = await _context.ExpertProfiles
-                .Include(ep => ep.User)
-                .Include(ep => ep.Field)
-                .Include(ep => ep.ExpertSkills) 
-                .Include(ep => ep.Experiences)
-                .Include(ep => ep.Certificates)
-                .Include(ep => ep.Projects)
-                .Include(ep => ep.ConsultationPackages)
-                .Include(ep => ep.ExpertAvailabilities)
-                .FirstOrDefaultAsync(ep => ep.ExpertProfileId == expertProfileId);
-
-            if (profile == null)
-                return NotFound(ApiResponse<string>.FailureResult("Expert profile not found."));
-
-            var response = new ExpertProfileResponseDto
-            {
-                ExpertProfileId = profile.ExpertProfileId,
-                UserId = profile.UserId,
-                FullName = profile.User?.FullName.Trim(),
-                ProfilePicture = profile.User?.Avatar,
-                JobTitle = profile.JobTitle,
-                FieldId = profile.FieldId,
-                FieldName = profile.Field?.FieldName ?? "Unknown Field",
-                Bio = profile.Bio,
-                TotalExperienceYears = profile.TotalExperienceYears,
-                ConsultationEnabled = profile.ConsultationEnabled,
-                LinkedInUrl = profile.LinkedInUrl,
-                GithubUrl = profile.GithubUrl,
-                PortfolioUrl = profile.PortfolioUrl,
-
-                Skills = profile.ExpertSkills.Select(s => s.SkillName).ToList(),
-
-                Experiences = profile.Experiences.Select(e => new ExperienceResponseDto
-                {
-                    JobTitle = e.JobTitle,
-                    CompanyName = e.CompanyName,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate
-                }).ToList(),
-
-                Certificates = profile.Certificates.Select(c => new CertificateResponseDto
-                {
-                    CertificateName = c.CertificateName,
-                    Issuer = c.Issuer,
-                    IssueDate = c.IssueDate
-                }).ToList(),
-
-                Projects = profile.Projects.Select(p => new ProjectResponseDto
-                {
-                    ProjectTitle = p.ProjectTitle,
-                    ProjectDescription = p.ProjectDescription,
-                    ProjectUrl = p.ProjectUrl,
-                    ProjectImage = p.ProjectImage
-                }).ToList(),
-
-                Availabilities = profile.ExpertAvailabilities.Select(a => new AvailabilityResponseDto
-                {
-                    DayOfWeek = a.DayOfWeek,
-                    StartTime = a.StartTime,
-                    EndTime = a.EndTime
-                }).ToList(),
-
-                Packages = profile.ConsultationPackages.Select(p => new PackageResponseDto
-                {
-                    Duration = p.Duration,
-                    Price = p.Price
-                }).ToList()
-            };
-
-            return Ok(ApiResponse<ExpertProfileResponseDto>.SuccessResult(response));
-        }
 
         [HttpPut]
         [Authorize]
@@ -346,12 +374,31 @@ namespace FindExpertsBackend.Controllers
             if (profile == null)
                 return NotFound(ApiResponse<string>.FailureResult("Expert profile not found."));
 
+            // Determine the FieldName before saving
+            string finalFieldName;
+            if (dto.FieldId.HasValue && dto.FieldId > 0)
+            {
+                var dbField = await _context.Fields.FindAsync(dto.FieldId);
+                if (dbField == null) return BadRequest(ApiResponse<string>.FailureResult("Invalid field selection."));
+                finalFieldName = dbField.FieldName;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.CustomField))
+            {
+                finalFieldName = dto.CustomField.Trim();
+                dto.FieldId = null; // Ensure the foreign key is null in the database
+            }
+            else
+            {
+                return BadRequest(ApiResponse<string>.FailureResult("You must select a predefined field or enter a custom one."));
+            }
+
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 // 2. Update scalar properties
                 profile.JobTitle = dto.JobTitle;
                 profile.FieldId = dto.FieldId;
+                profile.FieldName = finalFieldName;
                 profile.Bio = dto.Bio;
                 profile.LinkedInUrl = dto.LinkedInUrl;
                 profile.GithubUrl = dto.GithubUrl;

@@ -7,10 +7,8 @@ namespace FindExpertsBackend.DTOs
     {
         [Required, MaxLength(100)]
         public string JobTitle { get; set; }
-
-        [Required]
-        public int FieldId { get; set; }
-
+        public int? FieldId { get; set; }
+        public string? CustomField { get; set; }
         public string Bio { get; set; }
 
         public string? LinkedInUrl { get; set; }

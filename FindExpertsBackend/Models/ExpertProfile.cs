@@ -15,9 +15,10 @@ namespace FindExpertsBackend.Models
         [MaxLength(150)]
         public string JobTitle { get; set; }
 
-        [Required]
-        public int FieldId { get; set; }
+        public int? FieldId { get; set; }
 
+        [MaxLength(100)]
+        public string FieldName { get; set; }
         public string Bio { get; set; }
 
         [MaxLength(500)]
@@ -40,7 +41,7 @@ namespace FindExpertsBackend.Models
         public virtual User User { get; set; }
 
         [ForeignKey(nameof(FieldId))]
-        public virtual Field Field { get; set; }
+        public virtual Field? Field { get; set; }
 
         public virtual ICollection<ConsultationPackage> ConsultationPackages { get; set; } = new List <ConsultationPackage> ();
         public virtual ICollection<ExpertSkill> ExpertSkills { get; set; } = new List<ExpertSkill>();

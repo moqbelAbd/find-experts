@@ -7,7 +7,7 @@
         public string FullName { get; set; }
         public string? ProfilePicture { get; set; }
         public string JobTitle { get; set; }
-        public int FieldId { get; set; }
+        public int? FieldId { get; set; }
         public string FieldName { get; set; }
         public string Bio { get; set; }
         public int? TotalExperienceYears { get; set; }
