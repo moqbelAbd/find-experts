@@ -46,6 +46,17 @@
     font-size: 0.875rem;
 }
 
+.filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.filter-group.half-width {
+    flex: 1;
+    margin-bottom: 0;
+}
+
 .search-input-wrapper {
     position: relative;
 }

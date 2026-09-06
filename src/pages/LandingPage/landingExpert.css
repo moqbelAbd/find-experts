@@ -1,20 +1,21 @@
 .landing-expert-section {
-    background-color: #16221c;
+    background-color: #064e3b; /* Richer, deeper emerald background */
     padding: 10px 0;
     color: #ffffff;
     margin-bottom: 20px;
 }
 
-.expert-title {
+.landing-expert-title {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 16px;
     letter-spacing: -0.5px;
+    color: #ffffff;
 }
 
 .expert-subtitle {
-    font-size: 1.125rem;
-    color: #9ab0a3;
+    font-size: 1.4rem;
+    color: #a7f3d0; /* Crisp, highly readable mint green */
     margin-bottom: 32px;
     max-width: 700px;
 }
@@ -50,16 +51,18 @@
 .feature-icon {
     font-size: 1.5rem;
     margin-top: 2px;
+    color: #4ade80; /* Bright vibrant green to make the icons pop */
 }
 
 .feature-text h4 {
     font-size: 1.125rem;
     font-weight: 700;
     margin-bottom: 8px;
+    color: #ffffff;
 }
 
 .feature-text p {
-    color: #9ab0a3;
+    color: #cbd5e1; /* Clean, light slate gray for excellent readability */
     font-size: 1rem;
     line-height: 1.6;
     margin: 0;

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './auth.css';
+import authImg from '../../assets/auth image.png';
 
 export default function Register() {
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '' });
@@ -41,77 +42,87 @@ export default function Register() {
     };
 
     return (
-        <div className="auth-wrapper">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <h2>Create Account</h2>
-                    <p>Register as a new user</p>
-                </div>
+        /* The reverse-layout class puts the image on the right */
+        <div className="auth-container reverse-layout">
 
-                {error && (
-                    <div className="alert alert-danger">
-                        <div>{error}</div>
-                        {errorsList.length > 0 && (
-                            <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                                {errorsList.map((err, idx) => (
-                                    <li key={idx}>{err}</li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                )}
+            {/* Image (Now on the right side) */}
+            <div className="auth-image-side">
+                <img src={authImg} alt="Authentication Background" />
+            </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="fullName">Full Name</label>
-                        <input
-                            type="text"
-                            id="fullName"
-                            name="fullName"
-                            className="form-control"
-                            required
-                            value={formData.fullName}
-                            onChange={handleChange}
-                            placeholder="John Doe"
-                        />
+            {/* Form (Now on the left side) */}
+            <div className="auth-form-side">
+                <div className="auth-card">
+                    <div className="auth-header">
+                        <h2>Create Account</h2>
+                        <p>Register as a new user</p>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            className="form-control"
-                            required
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="name@example.com"
-                        />
+                    {error && (
+                        <div className="alert alert-danger">
+                            <div>{error}</div>
+                            {errorsList.length > 0 && (
+                                <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                                    {errorsList.map((err, idx) => (
+                                        <li key={idx}>{err}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="fullName">Full Name</label>
+                            <input
+                                type="text"
+                                id="fullName"
+                                name="fullName"
+                                className="form-control"
+                                required
+                                value={formData.fullName}
+                                onChange={handleChange}
+                                placeholder="John Doe"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="email">Email Address</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                className="form-control"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="name@example.com"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                className="form-control"
+                                required
+                                minLength={6}
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Minimum 6 characters"
+                            />
+                        </div>
+
+                        <button type="submit" className="primary-btn auth-btn" disabled={submitting}>
+                            {submitting ? 'Registering...' : 'Register'}
+                        </button>
+                    </form>
+
+                    <div className="auth-footer">
+                        Already have an account? <Link to="/login">Sign in</Link>
                     </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            className="form-control"
-                            required
-                            minLength={6}
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Minimum 6 characters"
-                        />
-                    </div>
-
-                    <button type="submit" className="primary-btn auth-btn" disabled={submitting}>
-                        {submitting ? 'Registering...' : 'Register'}
-                    </button>
-                </form>
-
-                <div className="auth-footer">
-                    Already have an account? <Link to="/login">Sign in</Link>
                 </div>
             </div>
         </div>

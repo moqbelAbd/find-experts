@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './auth.css';
+import authImg from '../../assets/auth image.png';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -33,51 +34,59 @@ export default function Login() {
     };
 
     return (
-        <div className="auth-wrapper">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <h2>Welcome Back</h2>
-                    <p>Sign in to your account</p>
-                </div>
+        <div className="auth-container">
+            {/* Left Side: Image */}
+            <div className="auth-image-side">
+                <img src={authImg} alt="Authentication Background" />
+            </div>
 
-                {error && <div className="alert alert-danger">{error}</div>}
-
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            className="form-control"
-                            required
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="name@example.com"
-                        />
+            {/* Right Side: Form */}
+            <div className="auth-form-side">
+                <div className="auth-card">
+                    <div className="auth-header">
+                        <h2>Welcome Back</h2>
+                        <p>Please enter your details to sign in</p>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            className="form-control"
-                            required
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="••••••••"
-                        />
+                    {error && <div className="alert alert-danger">{error}</div>}
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="email">Email Address</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                className="form-control"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="name@example.com"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                className="form-control"
+                                required
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button type="submit" className="primary-btn auth-btn" disabled={submitting}>
+                            {submitting ? 'Authenticating...' : 'Sign In'}
+                        </button>
+                    </form>
+
+                    <div className="auth-footer">
+                        Don't have an account? <Link to="/register">Create one</Link>
                     </div>
-
-                    <button type="submit" className="primary-btn auth-btn" disabled={submitting}>
-                        {submitting ? 'Authenticating...' : 'Sign In'}
-                    </button>
-                </form>
-
-                <div className="auth-footer">
-                    Don't have an account? <Link to="/register">Create one</Link>
                 </div>
             </div>
         </div>

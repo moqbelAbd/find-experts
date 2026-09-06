@@ -48,12 +48,11 @@ export default function ExpertInfo({ formData, updateFormData, nextStep }) {
                     value={formData.fieldId}
                     onChange={(e) => {
                         const val = e.target.value;
-                        setFormData(prev => ({
-                            ...prev,
+                        updateFormData({
                             fieldId: val,
                             // Clear the custom text if they switch back to a predefined field
-                            customField: val === 'other' ? prev.customField : ''
-                        }));
+                            customField: val === 'other' ? formData.customField : ''
+                        });
                     }}
                     className="form-input"
                     disabled={isLoading}

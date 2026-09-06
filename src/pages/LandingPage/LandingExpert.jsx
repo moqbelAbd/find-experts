@@ -6,9 +6,9 @@ export default function LandingExpert() {
     return (
         <section className="landing-expert-section">
             <div className="container">
-                <h2 className="expert-title">Share your expertise. Build your reputation.</h2>
+                <h2 className="landing-expert-title">Share your expertise. Build your reputation</h2>
                 <p className="expert-subtitle">
-                    Becoming an expert is free. Set up your profile, define your availability, and start getting discovered.
+                    Becoming an expert is free. Set up your profile, define your availability, and start getting discovered
                 </p>
 
                 <Link to="/become-expert" className="btn accent-btn expert-cta-btn">

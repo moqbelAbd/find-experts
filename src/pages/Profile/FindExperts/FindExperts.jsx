@@ -16,6 +16,7 @@ export default function FindExperts() {
         minRating: '',
         hasGuarantees: false,
         minGuarantees: '',
+        minExperience: '',
         maxPrice: ''
     });
 
@@ -44,6 +45,7 @@ export default function FindExperts() {
                 if (filters.fieldId) params.append('fieldId', filters.fieldId);
                 if (filters.hasGuarantees) params.append('hasGuarantees', true);
                 if (filters.minGuarantees) params.append('minGuarantees', filters.minGuarantees);
+                if (filters.minExperience) params.append('minExperience', filters.minExperience);
                 if (filters.minRating) params.append('minGuarantees', filters.minRating);
                 if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
 
@@ -138,15 +140,30 @@ export default function FindExperts() {
                     </select>
                 </div>
 
-                <div className="filter-group">
-                    <label>Minimum Guarantees</label>
-                    <input
-                        type="number"
-                        name="minGuarantees"
-                        placeholder="0"
-                        value={filters.minGuarantees}
-                        onChange={handleFilterChange}
-                    />
+                <div className="filter-row">
+                    <div className="filter-group half-width">
+                        <label>Min Guarantees</label>
+                        <input
+                            type="number"
+                            name="minGuarantees"
+                            placeholder="0"
+                            value={filters.minGuarantees}
+                            onChange={handleFilterChange}
+                            className="form-input"
+                        />
+                    </div>
+
+                    <div className="filter-group half-width">
+                        <label>Min Experience</label>
+                        <input
+                            type="number"
+                            name="minExperience"
+                            placeholder="0"
+                            value={filters.minExperience || ''}
+                            onChange={handleFilterChange}
+                            className="form-input"
+                        />
+                    </div>
                 </div>
 
                 <div className="filter-checkbox">

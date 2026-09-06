@@ -1,42 +1,45 @@
-import { Search } from 'lucide-react';
-import {Link, NavLink} from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './hero.css';
+import heroImg from '../../assets/Hero background.jpg';
 
 export default function Hero() {
     return (
         <section className="hero-section">
-            <div className="container">
-                <h1 className="hero-title">
-                    Find the right expert<br />
-                    for what you need.
-                </h1>
+            <div className="hero-container">
 
-                <p className="hero-subtitle">
-                    Ask a question, find a professional, request a service, or book a paid one to one consultation.
-                </p>
+                {/* Left Side: Structured Text */}
+                <div className="hero-text-content">
 
-                {/*<div className="hero-search-wrapper">*/}
-                {/*    <div className="hero-search-input-group">*/}
-                {/*        <Search className="hero-search-icon" size={20} />*/}
-                {/*        <input*/}
-                {/*            type="text"*/}
-                {/*            placeholder="Search by skill, field, or name..."*/}
-                {/*            className="hero-input"*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*    <button className="btn hero-btn hero-search-btn">*/}
-                {/*        Search*/}
-                {/*    </button>*/}
-                {/*</div>*/}
+                    <h1 className="hero-title">
+                        Find the right expert<br />
+                        <span className="text-highlight">Consult Top Experts</span><br />
+                        for what you need
+                    </h1>
 
-                <div className="hero-actions">
-                    <NavLink to="/find-experts"  className="btn primary-btn">
-                        Find Experts
-                    </NavLink>
-                    <button className="btn hero-outline-btn">
-                        Post What You Need
-                    </button>
+                    <p className="hero-subtitle">
+                        Ask a question, find a professional, request a service, or book a paid one to one consultation.
+                    </p>
+
+                    <div className="hero-actions">
+                        <Link to="/find-experts" className="btn primary-btn hero-btn">
+                            Find an Expert
+                        </Link>
+                        <Link to="/become-expert" className="btn outline-btn hero-btn hero-outline-btn">
+                            Become an Expert
+                        </Link>
+                    </div>
                 </div>
+
+                {/* Right Side: Image */}
+                <div className="hero-image-container">
+                    <img
+                        src={heroImg}
+                        alt="Expert video consultation and workspace"
+                        className="hero-real-image"
+                    />
+                </div>
+
             </div>
         </section>
     );
