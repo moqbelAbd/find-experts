@@ -32,6 +32,7 @@ namespace FindExpertsBackend.Controllers
             [FromQuery] bool? hasGuarantees,
             [FromQuery] decimal? maxPrice,
             [FromQuery] int? minGuarantees,
+            [FromQuery] int? minExperience,
             [FromQuery] int? minRating)
         {
             var query = _context.ExpertProfiles
@@ -44,7 +45,7 @@ namespace FindExpertsBackend.Controllers
                   .AsSplitQuery()
                    .AsQueryable();
 
-            // 1. Search by User Name or Field Name
+            //  Search by User Name or Field Name
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var lowerSearch = search.ToLower();
@@ -56,18 +57,18 @@ namespace FindExpertsBackend.Controllers
                     (ep.JobTitle.ToLower().Contains(lowerSearch)));
             }
 
-            // 2. Filter by Field 
+            //  Filter by Field 
             if (!string.IsNullOrWhiteSpace(fieldId) && int.TryParse(fieldId, out int parsedFieldId))
             {
                 query = query.Where(ep => ep.FieldId == parsedFieldId);
             }
 
-            // 3. Filter by Rating
+            //  Filter by Rating
             if (minRating.HasValue && minRating > 0)
             {
                 query = query.Where(ep => ep.Reviews.Any() && ep.Reviews.Average(r => r.Rating)  >= minRating);
             }
-            // 3. Filter by Guarantees
+            //  Filter by Guarantees
             if (hasGuarantees == true)
             {
                 query = query.Where(ep => ep.Guarantees.Any());
@@ -77,7 +78,13 @@ namespace FindExpertsBackend.Controllers
                 query = query.Where(ep => ep.Guarantees.Count() >= minGuarantees);
             }
 
-            // 4. Filter by Max Price
+            //  Filter by Expierence
+            if (minExperience.HasValue && minExperience > 0)
+            {
+                query = query.Where(ep => ep.TotalExperienceYears >= minExperience);
+            }
+
+            //  Filter by Max Price
             if (maxPrice.HasValue)
             {
                 query = query.Where(ep => ep.ConsultationPackages.Any() && ep.ConsultationPackages.Min(p => p.Price) <= maxPrice);
