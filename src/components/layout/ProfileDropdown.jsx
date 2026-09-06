@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
-import "./profileDropdown.css"
+import "./profile-dropdown.css"
 
 export default function ProfileDropdown({ user, logout }) {
     const [isOpen, setIsOpen] = useState(false);

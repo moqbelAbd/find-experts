@@ -105,7 +105,7 @@ export default function Register() {
                         />
                     </div>
 
-                    <button type="submit" className="btn-primary" disabled={submitting}>
+                    <button type="submit" className="primary-btn auth-btn" disabled={submitting}>
                         {submitting ? 'Registering...' : 'Register'}
                     </button>
                 </form>

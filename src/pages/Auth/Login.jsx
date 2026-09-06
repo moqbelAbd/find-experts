@@ -71,7 +71,7 @@ export default function Login() {
                         />
                     </div>
 
-                    <button type="submit" className="btn-primary" disabled={submitting}>
+                    <button type="submit" className="primary-btn auth-btn" disabled={submitting}>
                         {submitting ? 'Authenticating...' : 'Sign In'}
                     </button>
                 </form>
