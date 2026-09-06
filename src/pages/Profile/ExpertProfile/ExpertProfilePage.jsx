@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axiosClient from "../../../api/axiosClient.js";
 import toast from 'react-hot-toast';
-import { Globe, Briefcase, FolderGit2, Award, CalendarClock, Clock, Trash2, Plus } from 'lucide-react';
+import { Globe, Briefcase, FolderGit2, Award, CalendarClock, Clock, Trash2, Plus, ArrowUp } from 'lucide-react';
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 import './expert-profile-page.css';
 import { getUserIdFromToken } from "../../../utils/authUtils.js"
@@ -15,6 +15,40 @@ export default function ExpertProfilePage() {
     const [availableFields, setAvailableFields] = useState([]);
 
     const currentUserId = getUserIdFromToken();
+
+    const actionsRef = useRef(null);
+    const [showArrow, setShowArrow] = useState(false);
+
+    // Track scroll position to hide/show the arrow
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalPageHeight = document.documentElement.scrollHeight;
+            const currentScrollPosition = window.scrollY;
+
+            // Show the arrow only if scrolled past the first 25% (quarter) of the page
+            if (currentScrollPosition > (totalPageHeight * 0.2)) {
+                setShowArrow(true);
+            } else {
+                setShowArrow(false);
+            }
+        };
+
+        if (isEditing) {
+            window.addEventListener('scroll', handleScroll);
+            // Check initial position on load
+            handleScroll();
+        }
+
+        // Cleanup listener on unmount or when editing stops
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isEditing]);
+
+    const scrollToActions = () => {
+        actionsRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -199,7 +233,7 @@ export default function ExpertProfilePage() {
         <div className="container expert-profile-container">
 
             {isOwner && (
-                <div className="edit-actions-header">
+                <div className="edit-actions-header" ref={actionsRef}>
                     {isEditing ? (
                         <>
                             <button onClick={handleCancel} className="btn secondary-btn">Cancel</button>
@@ -369,6 +403,7 @@ export default function ExpertProfilePage() {
                                     </div>
                                     <button onClick={() => removeItem('experiences', i)} className="icon-delete-btn" style={{ alignSelf: 'flex-start' }}><Trash2 size={16} /> Remove Experience</button>
                                 </div>
+
                             ) : (
                                 <>
                                     <div className="list-item-content">
@@ -565,6 +600,16 @@ export default function ExpertProfilePage() {
                             </div>
                             {profile.packages.length === 0 && isEditing && <p className="empty-state-text">No pricing packages added.</p>}
                         </>
+                    )}
+                    {isEditing && showArrow &&(
+                        <button
+                            type="button"
+                            className="btn-scroll-to-actions"
+                            onClick={scrollToActions}
+                            aria-label="Scroll to save actions"
+                        >
+                            <ArrowUp size={24} />
+                        </button>
                     )}
                 </div>
             )}

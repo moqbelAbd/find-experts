@@ -297,3 +297,36 @@
     margin: 0 0 8px 0;
     color: var(--text-main);
 }
+
+.btn-scroll-to-actions {
+    position: fixed;
+    bottom: 90px;
+    right: 18px;
+    background-color: #237452;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-scroll-to-actions:hover {
+    background-color: #1b5c40;
+    transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+    .btn-scroll-to-actions {
+        bottom: 20px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+    }
+}
