@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace FindExpertsBackend.Controllers
@@ -70,9 +71,11 @@ namespace FindExpertsBackend.Controllers
             if (authorId.HasValue)
             {
                 query = query.Where(p => p.AuthorId == authorId);
+                query = query.Where(p => p.PostStatus == PostStatusEnum.Open || p.PostStatus == PostStatusEnum.Completed);
             }
             else
             {
+                query = query.Where(p => p.PostDeadLine >= DateTime.UtcNow);
                 query = query.Where(p => p.PostStatus == PostStatusEnum.Open);
                 query = query.Where(p => p.Author.UserStatus == UserStatusEnum.Active);
             }
@@ -106,8 +109,10 @@ namespace FindExpertsBackend.Controllers
                 postTitle = p.PostTitle,
                 PostContent = p.PostDescription,
                 CommentsCount = p.Comments.Count,
+                postDeadLine =p.PostDeadLine,
                 CreatedAt = p.CreatedAt,
                 PostStatus = p.PostStatus,
+                FieldId = p.FieldId,
 
                 AuthorId = p.AuthorId,
                 AuthorName = p.Author.FullName, 
@@ -246,5 +251,111 @@ namespace FindExpertsBackend.Controllers
             return Ok(ApiResponse<string>.SuccessResult("Creates post successfully"));
 
         }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UpdatePost([FromBody] UpdatePostDto dto)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
+
+            var post = await _context.Posts
+                .Include(p => p.ServicePost)
+                .Include(p => p.JobPost)
+                .Include(p => p.PostTags)
+            .FirstOrDefaultAsync(p => p.PostId == dto.PostId && p.AuthorId == userId);
+            if (post == null)
+            {
+                return NotFound(ApiResponse<string>.FailureResult("Post not found."));
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                post.UpdatedAt = DateTime.UtcNow;
+                post.PostTitle = dto.PostTitle;
+                post.PostDescription = dto.PostDescription;
+                post.PostDeadLine = dto.PostDeadLine ?? DateTime.UtcNow.AddDays(30);
+                post.FieldId = dto.FieldId;
+
+                var incomingTags = dto.Tags?.Distinct().ToList() ?? new List<string>();
+                var currentTags = post.PostTags.ToList();
+
+                var tagsToRemove = currentTags.Where(t => !incomingTags.Contains(t.TagName)).ToList();
+                var tagsToAdd = incomingTags.Where(nt => !currentTags.Any(t => t.TagName == nt)).ToList();
+
+                _context.RemoveRange(tagsToRemove); // Only delete what was actually removed
+                foreach (var tag in tagsToAdd)
+                {
+                    post.PostTags.Add(new PostTag { PostId = post.PostId, TagName = tag });
+                }
+
+                if (post.PostType == PostTypeEnum.Service && post.ServicePost != null)
+                {
+                    post.ServicePost.ServiceBudget = dto.Budget ?? 0;
+                }
+                else if (post.PostType == PostTypeEnum.Job && post.JobPost != null)
+
+                {
+                    WorkLocationTypeEnum? workLocationType = null;
+                    EmploymentTypeEnum? employmentType = null;
+
+                    if (dto.WorkLocationTypeId == 1) workLocationType = WorkLocationTypeEnum.OnSite;
+                    else if (dto.WorkLocationTypeId == 2) workLocationType = WorkLocationTypeEnum.Hybrid; 
+                    else if (dto.WorkLocationTypeId == 3) workLocationType = WorkLocationTypeEnum.Remote; 
+
+                    if (dto.EmploymentTypeId == 1) employmentType = EmploymentTypeEnum.FullTime;
+                    else if (dto.EmploymentTypeId == 2) employmentType = EmploymentTypeEnum.PartTime;
+                    else if (dto.EmploymentTypeId == 3) employmentType = EmploymentTypeEnum.Contract;
+                    else if (dto.EmploymentTypeId == 4) employmentType = EmploymentTypeEnum.Freelance;
+
+                    post.JobPost.Company = dto.Company;
+                    post.JobPost.ExpectedSalary = dto.ExpectedSalary;
+                    post.JobPost.JobLocation = dto.JobLocation;
+                    post.JobPost.WorkLocationType = workLocationType;
+                    post.JobPost.EmploymentType = employmentType;
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(ApiResponse<string>.SuccessResult("Post updated successfully"));
+            }
+                catch{
+                await transaction.RollbackAsync();  
+                return BadRequest(ApiResponse<string>.FailureResult("You must select a predefined field or enter a custom one."));
+
+            }
+           
+        }
+
+
+        [HttpPatch("{id}/status")]
+        [Authorize]
+        public async Task<IActionResult> ChangePostStatus(Guid id, int Status)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
+
+            var post = await _context.Posts.FirstOrDefaultAsync(p => p.PostId == id && p.AuthorId == userId);
+
+            if (post == null)
+                return NotFound(ApiResponse<string>.FailureResult("Post not found or unauthorized."));
+
+            if (Status == 2)
+                post.PostStatus = PostStatusEnum.Completed;
+            else if (Status == 3)
+                post.PostStatus = PostStatusEnum.Cancelled;
+
+            post.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse<string>.SuccessResult("Status updated successfully"));
+        }
+
     }
 }
