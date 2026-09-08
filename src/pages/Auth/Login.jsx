@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './auth.css';
-import authImg from '../../assets/auth image.png';
+import authImg from '../../assets/login image.jpeg';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });

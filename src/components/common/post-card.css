@@ -1,0 +1,176 @@
+
+.post-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.post-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.post-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.author-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.post-time {
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+/* Post Type Badges */
+.post-badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-question {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+}
+
+.badge-service {
+    background-color: #e0e7ff;
+    color: #3730a3;
+}
+
+.badge-job {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Post Body */
+.post-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #111827;
+}
+
+.post-excerpt {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+
+.post-budget {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+}
+
+/* Job Specific Details Box */
+.job-details-box {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 12px;
+    padding: 15px;
+    background-color: var(--surface);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-sm);
+    margin: 15px 0;
+}
+
+.job-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.job-detail-item svg {
+    color: var(--primary);
+}
+
+.job-detail-item strong {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Tags */
+.post-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.special-tags {
+    margin-bottom: 12px;
+}
+
+.tag {
+    background-color: #f3f4f6;
+    color: #374151;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.tag-light {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+
+/* Card Footer */
+.post-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 20px;
+}
+
+.post-metrics {
+    display: flex;
+    gap: 20px;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.btn-action {
+    background-color: #e6f4ea;
+    color: #0f5132;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #d1e7dd;
+}

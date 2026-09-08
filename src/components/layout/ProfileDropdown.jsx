@@ -19,7 +19,7 @@ export default function ProfileDropdown({ user, logout }) {
     }, []);
 
     const getInitials = (name) => name ? name.substring(0, 2).toUpperCase() : 'U';
-    const firstName = user?.fullName?.split(' ')[0] || "User";
+    // const firstName = user?.fullName?.split(' ')[0] || "User";
 
     return (
         <div className="dropdown-container" ref={dropdownRef}>
@@ -34,7 +34,7 @@ export default function ProfileDropdown({ user, logout }) {
                     className="avatar"
                 />
                 <span className="user-name">
-                {firstName} <ChevronDown size={16} color="var(--text-muted)" />
+                 <ChevronDown size={16} color="var(--text-muted)" />
             </span>
             </div>
 

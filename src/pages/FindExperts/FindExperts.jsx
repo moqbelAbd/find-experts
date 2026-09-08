@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosClient from "../../../api/axiosClient.js";
+import axiosClient from "../../api/axiosClient.js";
 import { Search, MapPin, Star } from 'lucide-react';
 import './find-experts.css';
 

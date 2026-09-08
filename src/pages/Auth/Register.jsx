@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './auth.css';
-import authImg from '../../assets/auth image.png';
+import authImg from '../../assets/register image.jpeg.jpeg';
 
 export default function Register() {
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '' });

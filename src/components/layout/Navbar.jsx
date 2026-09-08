@@ -3,7 +3,9 @@ import { useAuth } from '../../context/AuthContext';
 import { Bell, Menu, X } from 'lucide-react';
 import ProfileDropdown from './ProfileDropdown';
 import './navbar.css';
-import { useState } from "react";
+import logo from "../../assets/Logo/platform logo.png";
+
+import React, { useState } from "react";
 
 export default function Navbar() {
     const { user, token, logout } = useAuth();
@@ -16,8 +18,10 @@ export default function Navbar() {
         <nav className="navbar-container">
             <div className="nav-left">
                 <Link to="/" className="nav-brand" onClick={closeMenu}>
-                    <div className="logo-box">RE</div>
-                    Find Experts
+                    <img className="nav-logo"
+                         src={logo}
+                         alt="Expert video consultation and workspace"
+                    />
                 </Link>
             </div>
 
@@ -44,6 +48,9 @@ export default function Navbar() {
                         </NavLink>
                         <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Find Experts
+                        </NavLink>
+                        <NavLink to="/posts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                            Posts
                         </NavLink>
                     </>
                 )}

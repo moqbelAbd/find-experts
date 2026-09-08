@@ -23,8 +23,8 @@
 .hero-badge {
     display: inline-block;
     padding: 6px 14px;
-    background-color: #ffffff; /* Changed to solid white to pop off the green background */
-    color: #237452; /* Matched to your brand dark green */
+    background-color: #ffffff;
+    color: #237452;
     border: 1px solid rgba(35, 116, 82, 0.2);
     border-radius: 20px;
     font-size: 0.875rem;
@@ -36,22 +36,20 @@
     font-size: 3.2rem;
     line-height: 1.15;
     font-weight: 800;
-    color: #111827; /* Dark navy/black (Great contrast) */
+    color: #111827;
     margin-bottom: 20px;
 }
 
 .text-highlight {
-    /* Changed from light neon green to a very rich, dark emerald green.
-       This keeps the "green" brand theme but actually stands out against #9fcab7 */
     color: #064e3b;
 }
 
 .hero-subtitle {
     font-size: 1.125rem;
     line-height: 1.6;
-    color: #1f2937; /* Darkened from #4b5563 for sharper legibility */
+    color: #1f2937;
     margin-bottom: 36px;
-    font-weight: 500; /* Added slight weight for better readability */
+    font-weight: 500;
 }
 
 .hero-actions {
@@ -79,7 +77,7 @@
     background: rgb(195 253 220 / 0.63);
 }
 
-/* Right Column: Full Uncropped Image */
+/* Right Column: Full Image */
 .hero-image-container {
     flex: 1.1;
     display: flex;

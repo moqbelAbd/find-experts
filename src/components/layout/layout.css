@@ -47,16 +47,8 @@
     justify-content: center;
 }
 
-.footer-logo-text {
-    color: #ffffff;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
-.footer-brand-title {
-    font-weight: 600;
-    color: #F7F9F8;
-    font-size: 0.875rem;
+.footer-logo{
+    width: 150px;
 }
 
 .footer-description {

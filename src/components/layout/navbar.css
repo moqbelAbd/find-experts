@@ -25,14 +25,8 @@
     font-size: 1.1rem;
 }
 
-.logo-box {
-    background-color: var(--accent); /* Primary 500 */
-    color: #ffffff;
-    font-weight: 700;
-    padding: 6px 8px;
-    border-radius: 8px;
-    font-size: 1rem;
-    letter-spacing: 0.5px;
+.nav-logo{
+    width: 200px;
 }
 
 /* Navigation Links */

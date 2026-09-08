@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import './layout.css';
+import logo from "../../assets/Logo/white platform logo.png";
+import React from "react";
 
 export default function Layout() {
     return (
@@ -14,16 +16,16 @@ export default function Layout() {
                 <div className="footer-container">
                     <div className="footer-content">
                         <div className="footer-brand-wrapper">
-                            <div className="footer-logo-box">
-                                <span className="footer-logo-text">RE</span>
-                            </div>
-                            <span className="footer-brand-title">Rent an Expert</span>
+                                <img className="footer-logo"
+                                    src={logo}
+                                    alt="Expert video consultation and workspace"
+                                />
                         </div>
                         <p className="footer-description">
                             The professional marketplace for knowledge and skills.
                         </p>
                     <div className="footer-bottom">
-                        © 2026 Rent an Expert. All rights reserved.
+                        © 2026 FindExperts. All rights reserved.
                     </div>
                     </div>
 
