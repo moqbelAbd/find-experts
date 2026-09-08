@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link ,useParams} from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axiosClient  from '/src/api/axiosClient.js'
 import "./user-profile.css"
+import {getUserIdFromToken} from "../../utils/authUtils.js";
+import PostCard from "../../components/common/PostCard.jsx";
 
 export default function UserProfile() {
     const [profile, setProfile] = useState(null);
@@ -10,8 +12,12 @@ export default function UserProfile() {
     const [isEditingLocation, setIsEditingLocation] = useState(false);
     const [locationInput, setLocationInput] = useState('');
     const fileInputRef = useRef(null);
+    const [posts, setPosts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const {userId} = useParams();
+    const currentUserId = getUserIdFromToken();
+    const isOwner = userId === currentUserId;
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -28,12 +34,12 @@ export default function UserProfile() {
                     window.location.href = '/login';
                 }
                 }finally {
-                setLoading(false);
+                setIsLoading(false);
             }
         };
 
         fetchProfile();
-    }, []);
+    }, [userId]);
 
     const handleLocationSave = async () => {
         const toastId = toast.loading('Saving location...');
@@ -80,6 +86,33 @@ export default function UserProfile() {
         }
     };
 
+// Fetch user posts
+    useEffect(() => {
+        const fetchPosts = async () => {
+            setIsLoading(true);
+            try {
+                const targetUserId = userId || currentUserId;
+
+                const response = await axiosClient.get('/post', {
+                    params: { authorId: targetUserId }
+                });
+
+                const fetchedData = response.data?.data || response.data;
+
+                if (fetchedData && fetchedData.length > 0) {
+                    setPosts(fetchedData);
+                }
+            } catch (error) {
+                console.warn("error fetching posts", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+            fetchPosts();
+    }, [userId, currentUserId]);
+
+
     if (loading) return <div className="p-10 text-center">Loading...</div>;
     if (!profile) return <div className="p-10 text-center text-red-500">Failed to load profile.</div>;
 
@@ -90,8 +123,9 @@ export default function UserProfile() {
             <div className="profile-page-wrapper">
                 <div className="profile-header">
                     {/* Using your global section-title */}
-                    <h1 className="section-title" style={{ marginBottom: 0 }}>My Profile</h1>
-
+                    <h1 className="section-title" style={{ marginBottom: 0 }}>
+                        {isOwner ? 'My Profile' :  'User Profile' }
+                </h1>
                     {profile.expertProfileId ? (
                         <Link to={`/expert/${profile.expertProfileId}`} className="btn primary-btn">
                             View Expert Profile
@@ -114,8 +148,8 @@ export default function UserProfile() {
                                 initials
                             )}
                         </div>
-
-                        <button onClick={() => fileInputRef.current.click()} className="btn-upload-photo">
+                        { isOwner && (
+                        <><button onClick={() => fileInputRef.current.click()} className="btn-upload-photo">
                             Upload Photo
                         </button>
                         <input
@@ -125,6 +159,8 @@ export default function UserProfile() {
                             className="hidden-file-input"
                             accept="image/*"
                         />
+                        </>
+                    )}
                     </div>
 
                     <div className="profile-info-section">
@@ -156,7 +192,8 @@ export default function UserProfile() {
                             ) : (
                                 <div className="location-view-mode">
                                     <p>{profile.userLocation || 'No location added'}</p>
-                                    <button
+                                    {isOwner&& (
+                                        <button
                                         onClick={() => {
                                             setLocationInput(profile.userLocation || '');
                                             setIsEditingLocation(true);
@@ -165,10 +202,27 @@ export default function UserProfile() {
                                     >
                                         Edit
                                     </button>
+                                    )}
                                 </div>
                             )}
                         </div>
                     </div>
+                </div>
+                {/* Posts List */}
+                <div className="posts-list">
+                    {isLoading ? (
+                        <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                            Loading posts...
+                        </div>
+                    ) : posts.length > 0 ? (
+                        posts.map(post => (
+                            <PostCard key={post.id} post={post} />
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                            No posts found matching your criteria.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

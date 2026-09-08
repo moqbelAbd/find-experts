@@ -1,6 +1,6 @@
 import React from 'react';
 import {MessageCircle, Users, Briefcase, Building, MapPin, Banknote, Clock, Edit, Trash2, Lock} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link} from 'react-router-dom';
 import './post-card.css';
 import { getUserIdFromToken } from '../../utils/authUtils.js';
 import {getTimeAgo} from '../../utils/getTimeHelper.js'
@@ -90,11 +90,14 @@ export default function PostCard({ post }) {
         <div className="post-card">
             <div className="post-card-header">
 
-                <div className="post-author">
+                <div className="header-left" style={{display: 'flex', alignItems: 'center',gap: '12px'}}>
+                <Link to={`/profile/${post.authorId}`} className="post-author">
                     <img src={post.authorAvatar || 'https://i.pravatar.cc/150'} alt={post.authorName} className="author-avatar" />
                     <span className="author-name">{post.authorName || 'Unknown User'}</span>
-                    <span className="post-time">{getTimeAgo(post.createdAt)}</span>
+                </Link>
+                <span className="post-time">{getTimeAgo(post.createdAt)}</span>
                 </div>
+
                 <div style={{display:"flex", gap:"8px"}}>
                     {isAuthor && (
                         <>
@@ -121,9 +124,26 @@ export default function PostCard({ post }) {
             </div>
 
             <div className="post-card-body">
-                <p className="post-title">{post.postTitle}</p>
-                <p className="post-excerpt">{post.postContent}</p>
+                <Link to={`/post/${post.postId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <p className="post-title" style={{ cursor: 'pointer' }}>{post.postTitle}</p>
+                </Link>
 
+                <p className="post-excerpt">
+                    {post.postContent && post.postContent.length > 500
+                        ? `${post.postContent.substring(0, 500)}...`
+                        : post.postContent
+                    }
+
+                    {post.postContent && post.postContent.length > 500 && (
+                        <span
+                            onClick={() => navigate(`/post/${post.postId}`)}
+                            style={{ color: 'var(--primary)', cursor: 'pointer', fontWeight: '500', marginLeft: '4px' }}
+                        >
+                            Read more
+                        </span>
+                    )}
+                </p>
+                
                 {/* Distinct Job Information Box */}
                 {isJob && (
                     <div className="job-details-box">

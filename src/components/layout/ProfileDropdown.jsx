@@ -2,11 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import "./profile-dropdown.css"
+import {getUserIdFromToken} from "../../utils/authUtils.js";
 
 export default function ProfileDropdown({ user, logout }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
-
+    const userId = getUserIdFromToken();
     // Close dropdown when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
@@ -46,7 +47,7 @@ export default function ProfileDropdown({ user, logout }) {
                     </div>
 
                     <div className="dropdown-links">
-                        <Link to="/profile" onClick={() => setIsOpen(false)} className="dropdown-link">
+                        <Link to={`/profile/${userId}`} onClick={() => setIsOpen(false)} className="dropdown-link">
                             My Profile
                         </Link>
                         <Link to="/bookings" onClick={() => setIsOpen(false)} className="dropdown-link">
