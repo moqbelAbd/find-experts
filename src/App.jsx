@@ -14,6 +14,7 @@ import ExpertProfilePage from "./pages/Profile/ExpertProfile/ExpertProfilePage.j
 import FindExperts from "./pages/FindExperts/FindExperts.jsx";
 import PostsPage from "./pages/PostsPage/PostsPage.jsx";
 import CreatePost from "./pages/PostsPage/CreatePost.jsx";
+import EditPostPage from "./pages/PostsPage/EditPostPage.jsx";
 
 export default function App() {
     return (
@@ -32,8 +33,7 @@ export default function App() {
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/how-it-works" element={<HowItWorks />} />
                         <Route path="/posts" element={<PostsPage />} />
-                        <Route path="/profile" element={<UserProfile />} />
-                        <Route path="/find-experts" element={<FindExperts />} />
+                        <Route path="/post/edit/:id" element={<EditPostPage />} />                        <Route path="/find-experts" element={<FindExperts />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                         <Route path="/expert/:expertId" element={<ExpertProfilePage />} />
 

@@ -174,3 +174,28 @@
 .btn-action:hover {
     background-color: #d1e7dd;
 }
+
+.post-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-edit-post {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.btn-edit-post:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: var(--surface);
+}

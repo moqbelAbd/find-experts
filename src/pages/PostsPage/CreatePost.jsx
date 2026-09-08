@@ -5,23 +5,7 @@ import { toast } from 'react-hot-toast';
 import './create-post.css';
 import {useNavigate} from "react-router-dom";
 
-export default function CreatePost() {
-    // --- Form State ---
-    const [formData, setFormData] = useState({
-        postTypeId: 1,
-        postTitle: '',
-        postDescription: '',
-        fieldId: '',
-        tags: [],
-        postDeadLine: '',
-        budget: '',
-        company: '',
-        JobLocation: '',
-        expectedSalary: '',
-        workLocationTypeId: '',
-        jobLocation: '',
-        employmentTypeId: ''
-    });
+export default function CreatePost({isEdit = false, initialData = null, postId = null}) {    // --- Form State ---
 
     const navigate = useNavigate();
 
@@ -45,7 +29,47 @@ export default function CreatePost() {
         { id: 4, name: 'Freelance' }
     ];
 
-    // --- Effects ---
+    const [formData, setFormData] = useState(() => {
+        if (isEdit && initialData) {
+        let mappedTypeId = 1;
+    const typeStr = String(initialData.type || initialData.postTypeId || '').toUpperCase();
+    if (typeStr === '2' || typeStr === 'SERVICE') mappedTypeId = 2;
+    if (typeStr === '3' || typeStr === 'JOB') mappedTypeId = 3;
+
+    //  Pre-fill form if editing
+            return{
+                postTypeId: mappedTypeId,
+                postTitle: initialData.postTitle || '',
+                postDescription: initialData.postContent || '',
+                fieldId: initialData.fieldId || '',
+                tags: initialData.tags || [],
+                postDeadLine: initialData.postDeadLine ? initialData.postDeadLine.split('T')[0] : '',
+                budget: initialData.budget || '',
+                company: initialData.company || '',
+                expectedSalary: initialData.expectedSalary || '',
+                workLocationTypeId: initialData.workLocationType || '',
+                jobLocation: initialData.jobLocation || '',
+                employmentTypeId: initialData.employmentType || ''
+            };
+        }
+        // Default empty state for creating a NEW post
+        return {
+            postTypeId: 1,
+            postTitle: '',
+            postDescription: '',
+            fieldId: '',
+            tags: [],
+            postDeadLine: '',
+            budget: '',
+            company: '',
+            expectedSalary: '',
+            workLocationTypeId: '',
+            jobLocation: '',
+            employmentTypeId: ''
+        };
+    });
+
+    //  Fetch Fields
     useEffect(() => {
         const fetchFields = async () => {
             try {
@@ -58,7 +82,8 @@ export default function CreatePost() {
         fetchFields();
     }, []);
 
-    useEffect(() => {
+        //  Fetch Skills based on Field
+     useEffect(() => {
         const fetchSkills = async () => {
             if (!formData.fieldId) {
                 setAvailableSkills([]);
@@ -85,6 +110,7 @@ export default function CreatePost() {
     };
 
     const handleTypeSelect = (typeId) => {
+        if (isEdit) return;
         setFormData(prev => ({ ...prev, postTypeId: typeId }));
     };
 
@@ -116,6 +142,10 @@ export default function CreatePost() {
                 tags: formData.tags,
             };
 
+            if (isEdit && postId) {
+                payload.postId = postId;
+            }
+
             if (formData.postTypeId === 2 || formData.postTypeId === 3) {
                 payload.postDeadLine = formData.postDeadLine || null;
             }
@@ -133,29 +163,36 @@ export default function CreatePost() {
                 payload.jobLocation = formData.workLocationTypeId === '1' ? formData.jobLocation : null;
             }
 
-            const response = await axiosClient.post('/Post', payload);
-            toast.success("Post created successfully");
+            if (isEdit) {
+                await axiosClient.put('/post', payload);
+                toast.success("Post updated successfully");
+            } else {
+                await axiosClient.post('/Post', payload);
+                toast.success("Post created successfully");
+            }
             navigate(`/posts`);
 
         } catch (err) {
-            toast.error(err.response?.data?.message || "Failed to create post.");
-        } finally {
+            toast.error(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} post.`);        } finally {
             setIsSubmitting(false);
         }
     };
+
     const today = new Date().toISOString().split('T')[0];
     return (
         <div className="create-post-wrapper container">
-            <h2 className="section-title">Create a New Post</h2>
+            <h2 className="section-title">{isEdit ? 'Edit Post' : 'Create a New Post'}</h2>
             {error && <div className="form-error">{error}</div>}
 
             <form onSubmit={handleSubmit}>
 
                 {/* --- 1. POST TYPE GRID --- */}
-                <div className="type-grid">
+                {!isEdit&& (
+                    <div className="type-grid">
                     <button
                         type="button"
                         className={`type-button ${formData.postTypeId === 1 ? 'active' : ''}`}
+                        disabled={isEdit}
                         onClick={() => handleTypeSelect(1)}
                     >
                         <HelpCircle size={24} />
@@ -180,6 +217,7 @@ export default function CreatePost() {
                         <h4>Job</h4>
                     </button>
                 </div>
+                )}
 
                 {/* --- 2. BASE FORM --- */}
                 <div className="base-form-section">
@@ -198,7 +236,7 @@ export default function CreatePost() {
                         <select name="fieldId" className="form-control" value={formData.fieldId} onChange={handleInputChange} required>
                             <option value="">Select a field...</option>
                             {fields.map(f => (
-                                <option key={f.fieldId || f.id} value={f.fieldId || f.id}>{f.fieldName || f.name}</option>
+                                <option key={f.fieldId } value={f.fieldId }>{f.fieldName }</option>
                             ))}
                         </select>
                     </div>
@@ -317,7 +355,9 @@ export default function CreatePost() {
                 <div className="form-actions">
                     {/* Uses your global primary-btn class */}
                     <button type="submit" className="btn primary-btn" disabled={isSubmitting}>
-                        {isSubmitting ? 'Publishing...' : 'Publish Post'}
+                        {isSubmitting ?
+                            (isEdit ? 'Saving...' : 'Publishing...')
+                            : (isEdit ? 'Save Changes' : 'Publish Post')}
                     </button>
                 </div>
             </form>
