@@ -4,6 +4,7 @@ using FindExpertsBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FindExpertsBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260907131025_Post_AdjustingModelss")]
+    partial class Post_AdjustingModelss
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -478,8 +481,8 @@ namespace FindExpertsBackend.Migrations
                     b.Property<int?>("EmploymentType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ExpectedSalary")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("ExpectedSalary")
+                        .HasColumnType("decimal(12,2)");
 
                     b.Property<string>("JobLocation")
                         .HasMaxLength(255)
@@ -581,15 +584,15 @@ namespace FindExpertsBackend.Migrations
 
                     b.Property<string>("PostDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("PostStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("PostTitle")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PostType")
                         .HasColumnType("int");

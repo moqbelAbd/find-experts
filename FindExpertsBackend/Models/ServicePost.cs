@@ -8,7 +8,7 @@ namespace FindExpertsBackend.Models
         [Key]
         public Guid PostId { get; set; }
 
-        public string ServiceDetails { get; set; }
+        public int ServiceBudget { get; set; }
 
         // Navigation Properties
         [ForeignKey(nameof(PostId))]

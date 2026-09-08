@@ -21,10 +21,10 @@ namespace FindExpertsBackend.Models
 
         public DateTime PostDeadLine {  get; set; }
 
-        [Required]
         [MaxLength(255)]
         public string PostTitle { get; set; }
 
+        [Required]
         public string PostDescription { get; set; }
 
         [Required]
@@ -46,8 +46,7 @@ namespace FindExpertsBackend.Models
         public virtual JobPost JobPost { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
-        public virtual ICollection<ServiceInterest> ServiceInterests { get; set; } = new List<ServiceInterest>();
-        public virtual ICollection<JobInterest> JobInterests { get; set; } = new List<JobInterest>();
+        public virtual ICollection<PostInterest> PostInterests { get; set; } = new List<PostInterest>();
         public virtual ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
     }
 }

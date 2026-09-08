@@ -81,6 +81,7 @@ builder.Services.AddControllers()
 
             return new BadRequestObjectResult(response);
         };
+
     }); 
 
 builder.Services.AddEndpointsApiExplorer();

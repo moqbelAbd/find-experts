@@ -25,8 +25,7 @@ namespace FindExpertsBackend.Data
         public DbSet<ServicePost> ServicePosts { get; set; }
         public DbSet<JobPost> JobPosts { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<ServiceInterest> ServiceInterests { get; set; }
-        public DbSet<JobInterest> JobInterests { get; set; }
+        public DbSet<PostInterest> PostInterests { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<ExpertAvailability> ExpertAvailabilities { get; set; }
         public DbSet<Review> Reviews { get; set; }
@@ -148,18 +147,11 @@ namespace FindExpertsBackend.Data
                 .HasForeignKey(g => g.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 6. Service Interests
-            modelBuilder.Entity<ServiceInterest>()
+            // 6. Post Interests
+            modelBuilder.Entity<PostInterest>()
                 .HasOne(si => si.Expert)
-                .WithMany(e => e.ServiceInterests)
+                .WithMany(e => e.PostInterests)
                 .HasForeignKey(si => si.ExpertId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // 7. Job Interests
-            modelBuilder.Entity<JobInterest>()
-                .HasOne(ji => ji.Expert)
-                .WithMany(e => e.JobInterests)
-                .HasForeignKey(ji => ji.ExpertId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 8. Favorite Consultants 

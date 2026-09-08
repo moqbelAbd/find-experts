@@ -48,8 +48,7 @@ namespace FindExpertsBackend.Models
         public virtual ICollection<Experience> Experiences { get; set; } = new List<Experience>();
         public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
-        public virtual ICollection<ServiceInterest> ServiceInterests { get; set; } = new List<ServiceInterest>();
-        public virtual ICollection<JobInterest> JobInterests { get; set; } = new List<JobInterest>();
+        public virtual ICollection<PostInterest> PostInterests { get; set; } = new List<PostInterest>();
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public virtual ICollection<ExpertAvailability> ExpertAvailabilities { get; set; } = new List<ExpertAvailability>();
 

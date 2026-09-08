@@ -4,6 +4,7 @@ using FindExpertsBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FindExpertsBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260907124100_Post_AdjustModel")]
+    partial class Post_AdjustModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -465,6 +468,30 @@ namespace FindExpertsBackend.Migrations
                     b.ToTable("Guarantees");
                 });
 
+            modelBuilder.Entity("FindExpertsBackend.Models.JobInterest", b =>
+                {
+                    b.Property<Guid>("JobInterestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ExpertId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("JobInterestId");
+
+                    b.HasIndex("ExpertId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("JobInterests");
+                });
+
             modelBuilder.Entity("FindExpertsBackend.Models.JobPost", b =>
                 {
                     b.Property<Guid>("PostId")
@@ -478,10 +505,11 @@ namespace FindExpertsBackend.Migrations
                     b.Property<int?>("EmploymentType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ExpectedSalary")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("ExpectedSalary")
+                        .HasColumnType("decimal(12,2)");
 
                     b.Property<string>("JobLocation")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -594,6 +622,9 @@ namespace FindExpertsBackend.Migrations
                     b.Property<int>("PostType")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Solved")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -604,30 +635,6 @@ namespace FindExpertsBackend.Migrations
                     b.HasIndex("FieldId");
 
                     b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("FindExpertsBackend.Models.PostInterest", b =>
-                {
-                    b.Property<Guid>("ServiceInterestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ExpertId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ServiceInterestId");
-
-                    b.HasIndex("ExpertId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostInterests");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.PostTag", b =>
@@ -725,6 +732,30 @@ namespace FindExpertsBackend.Migrations
                     b.HasIndex("ReviewerId");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("FindExpertsBackend.Models.ServiceInterest", b =>
+                {
+                    b.Property<Guid>("ServiceInterestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ExpertId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ServiceInterestId");
+
+                    b.HasIndex("ExpertId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("ServiceInterests");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.ServicePost", b =>
@@ -1177,6 +1208,25 @@ namespace FindExpertsBackend.Migrations
                     b.Navigation("Expert");
                 });
 
+            modelBuilder.Entity("FindExpertsBackend.Models.JobInterest", b =>
+                {
+                    b.HasOne("FindExpertsBackend.Models.ExpertProfile", "Expert")
+                        .WithMany("JobInterests")
+                        .HasForeignKey("ExpertId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FindExpertsBackend.Models.Post", "Post")
+                        .WithMany("JobInterests")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Expert");
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("FindExpertsBackend.Models.JobPost", b =>
                 {
                     b.HasOne("FindExpertsBackend.Models.Post", "Post")
@@ -1237,25 +1287,6 @@ namespace FindExpertsBackend.Migrations
                     b.Navigation("Field");
                 });
 
-            modelBuilder.Entity("FindExpertsBackend.Models.PostInterest", b =>
-                {
-                    b.HasOne("FindExpertsBackend.Models.ExpertProfile", "Expert")
-                        .WithMany("PostInterests")
-                        .HasForeignKey("ExpertId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FindExpertsBackend.Models.Post", "Post")
-                        .WithMany("PostInterests")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Expert");
-
-                    b.Navigation("Post");
-                });
-
             modelBuilder.Entity("FindExpertsBackend.Models.PostTag", b =>
                 {
                     b.HasOne("FindExpertsBackend.Models.Post", "Post")
@@ -1309,6 +1340,25 @@ namespace FindExpertsBackend.Migrations
                     b.Navigation("Expert");
 
                     b.Navigation("Reviewer");
+                });
+
+            modelBuilder.Entity("FindExpertsBackend.Models.ServiceInterest", b =>
+                {
+                    b.HasOne("FindExpertsBackend.Models.ExpertProfile", "Expert")
+                        .WithMany("ServiceInterests")
+                        .HasForeignKey("ExpertId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FindExpertsBackend.Models.Post", "Post")
+                        .WithMany("ServiceInterests")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Expert");
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.ServicePost", b =>
@@ -1410,11 +1460,13 @@ namespace FindExpertsBackend.Migrations
 
                     b.Navigation("Guarantees");
 
-                    b.Navigation("PostInterests");
+                    b.Navigation("JobInterests");
 
                     b.Navigation("Projects");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("ServiceInterests");
                 });
 
             modelBuilder.Entity("FindExpertsBackend.Models.Field", b =>
@@ -1430,12 +1482,14 @@ namespace FindExpertsBackend.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("JobInterests");
+
                     b.Navigation("JobPost")
                         .IsRequired();
 
-                    b.Navigation("PostInterests");
-
                     b.Navigation("PostTags");
+
+                    b.Navigation("ServiceInterests");
 
                     b.Navigation("ServicePost")
                         .IsRequired();

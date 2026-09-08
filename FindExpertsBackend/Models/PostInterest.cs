@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FindExpertsBackend.Models
 {
-    public class JobInterest
+    public class PostInterest
     {
         [Key]
-        public Guid JobInterestId { get; set; } = Guid.NewGuid();
+        public Guid ServiceInterestId { get; set; } = Guid.NewGuid();
 
         [Required]
         public Guid PostId { get; set; }

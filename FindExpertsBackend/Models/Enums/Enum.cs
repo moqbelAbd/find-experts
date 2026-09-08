@@ -39,9 +39,10 @@ namespace FindExpertsBackend.Models.Enums
 
     public enum WorkLocationTypeEnum
     {
-        Remote = 1,
-        OnSite = 2,
-        Hybrid = 3
+        OnSite = 1,
+        Hybrid = 2,
+        Remote = 3,
+
     }
 
     public enum BookingStatusEnum

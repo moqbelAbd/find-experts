@@ -12,11 +12,10 @@ namespace FindExpertsBackend.Models
         [MaxLength(150)]
         public string Company { get; set; }
 
-        [Column(TypeName = "decimal(12,2)")]
-        public decimal? ExpectedSalary { get; set; }
+        public int? ExpectedSalary { get; set; }
 
         [MaxLength(255)]
-        public string JobLocation { get; set; }
+        public string? JobLocation { get; set; }
 
         public EmploymentTypeEnum? EmploymentType { get; set; }
         public WorkLocationTypeEnum? WorkLocationType { get; set; }

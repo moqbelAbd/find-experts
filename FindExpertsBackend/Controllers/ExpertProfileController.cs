@@ -1,6 +1,7 @@
 ﻿using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
-using FindExpertsBackend.Models; 
+using FindExpertsBackend.Models;
+using FindExpertsBackend.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -69,7 +70,7 @@ namespace FindExpertsBackend.Controllers
                 query = query.Where(ep => ep.Reviews.Any() && ep.Reviews.Average(r => r.Rating)  >= minRating);
             }
             //  Filter by Guarantees
-            if (hasGuarantees == true)
+            if (hasGuarantees == true)  
             {
                 query = query.Where(ep => ep.Guarantees.Any());
             }
@@ -207,6 +208,13 @@ namespace FindExpertsBackend.Controllers
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
+
+            var user = await _context.Users.FindAsync(userIdStr);
+
+            if(user == null || user.UserStatus != UserStatusEnum.Active)
+            {
+                return BadRequest(ApiResponse<string>.FailureResult("Your account is not active or does not exist."));
+            }
 
             // 1. Check if user already has an expert profile
             var existingProfile = await _context.ExpertProfiles.FirstOrDefaultAsync(ep => ep.UserId == userId);
