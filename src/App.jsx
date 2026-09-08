@@ -11,7 +11,9 @@ import LandingPage from "./pages/LandingPage/LandingPage.jsx";
 import HowItWorks from "./pages/LandingPage/HowItWorks.jsx";
 import BecomeExpert from "./pages/Profile/ExpertProfile/BecomeExpert/BecomeExpert.jsx";
 import ExpertProfilePage from "./pages/Profile/ExpertProfile/ExpertProfilePage.jsx";
-import FindExperts from "./pages/Profile/FindExperts/FindExperts.jsx";
+import FindExperts from "./pages/FindExperts/FindExperts.jsx";
+import PostsPage from "./pages/PostsPage/PostsPage.jsx";
+import CreatePost from "./pages/PostsPage/CreatePost.jsx";
 
 export default function App() {
     return (
@@ -29,6 +31,7 @@ export default function App() {
                         {/* Public Routes */}
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/how-it-works" element={<HowItWorks />} />
+                        <Route path="/posts" element={<PostsPage />} />
                         <Route path="/profile" element={<UserProfile />} />
                         <Route path="/find-experts" element={<FindExperts />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
@@ -38,6 +41,7 @@ export default function App() {
                         <Route element={<ProtectedRoute />}>
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/become-expert" element={<BecomeExpert />} />
+                            <Route path="/create-post" element={<CreatePost />} />
                         </Route>
 
                     </Route>

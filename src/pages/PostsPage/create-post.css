@@ -1,0 +1,187 @@
+/* =========================================
+   CREATE POST PAGE
+   ========================================= */
+.create-post-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-error {
+    color: var(--danger);
+    background-color: var(--danger-bg);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-xl);
+    border: 1px solid var(--danger);
+}
+
+/* --- Type Selector Grid --- */
+.type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.type-button {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+}
+
+.type-button:hover {
+    border-color: var(--accent);
+    background-color: var(--surface);
+}
+
+.type-button.active {
+    border: 2px solid var(--primary);
+    background-color: var(--surface);
+    color: var(--primary);
+}
+
+.type-button h4 {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* --- Form Layout & Controls --- */
+.base-form-section,
+.extended-form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.extended-form-section {
+    border-top: 1px solid var(--border);
+    padding-top: 25px;
+}
+
+.extended-form-section h3 {
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    background-color: white;
+    transition: border-color var(--transition-base);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* --- Tags & Skills --- */
+.tag-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.tag-badge {
+    background: var(--border);
+    color: var(--text-main);
+    padding: 5px 12px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.875rem;
+}
+
+.tag-badge svg {
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color var(--transition-base);
+}
+
+.tag-badge svg:hover {
+    color: var(--danger);
+}
+
+.skills-suggestions {
+    margin-top: 15px;
+}
+
+.skills-suggestions small {
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-suggestion-btn {
+    background: transparent;
+    border: 1px dashed var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.skill-suggestion-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--surface);
+}
+
+/* --- Form Actions --- */
+.form-actions {
+    margin-top: 30px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
