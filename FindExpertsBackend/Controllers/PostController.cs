@@ -116,15 +116,15 @@ namespace FindExpertsBackend.Controllers
 
                 AuthorId = p.AuthorId,
                 AuthorName = p.Author.FullName, 
-                AuthorAvatar = p.Author.Avatar, 
+                AuthorAvatar = p.Author.Avatar,
 
                 // Service Specific mapping
                 Budget = p.ServicePost != null ? p.ServicePost.ServiceBudget : null,
 
                 // Job Specific mapping
-                EmploymentType = p.JobPost.EmploymentType?? EmploymentTypeEnum.FullTime,
+                EmploymentType = p.JobPost != null ? p.JobPost.EmploymentType?? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.FullTime,
                 Company = p.JobPost != null ? p.JobPost.Company : null,
-                WorkLocationType = p.JobPost.WorkLocationType ?? WorkLocationTypeEnum.OnSite,
+                WorkLocationType = p.JobPost != null ? p.JobPost.WorkLocationType ?? WorkLocationTypeEnum.OnSite : WorkLocationTypeEnum.OnSite,
                 JobLocation = p.JobPost != null ? p.JobPost.JobLocation : null,
                 ExpectedSalary = p.JobPost != null ? p.JobPost.ExpectedSalary : null,
                 PostInterests = p.PostInterests.Count ,
@@ -135,6 +135,41 @@ namespace FindExpertsBackend.Controllers
 
             return Ok(ApiResponse <List<postsDto>>.SuccessResult(posts));
     }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPostById(Guid id)
+        {
+            var post = await _context.Posts
+                .Where(p => p.PostId == id)
+                .Select(p => new postsDto 
+                {
+                    PostId = p.PostId,
+                    Type = p.PostType,
+                    postTitle = p.PostTitle,
+                    PostContent = p.PostDescription,
+                    CommentsCount = p.Comments.Count,
+                    postDeadLine = p.PostDeadLine,
+                    CreatedAt = p.CreatedAt,
+                    PostStatus = p.PostStatus,
+                    FieldId = p.FieldId,
+                    AuthorId = p.AuthorId,
+                    AuthorName = p.Author.FullName,
+                    AuthorAvatar = p.Author.Avatar,
+                    Budget = p.ServicePost != null ? p.ServicePost.ServiceBudget : null,
+                    EmploymentType = p.JobPost != null ? p.JobPost.EmploymentType ?? EmploymentTypeEnum.FullTime : EmploymentTypeEnum.FullTime,
+                    Company = p.JobPost != null ? p.JobPost.Company : null,
+                    WorkLocationType = p.JobPost != null ? p.JobPost.WorkLocationType ?? WorkLocationTypeEnum.OnSite : WorkLocationTypeEnum.OnSite,
+                    JobLocation = p.JobPost != null ? p.JobPost.JobLocation : null,
+                    ExpectedSalary = p.JobPost != null ? p.JobPost.ExpectedSalary : null,
+                    PostInterests = p.PostInterests.Count,
+                    Tags = p.PostTags.Select(pt => pt.TagName).ToList()
+                }).FirstOrDefaultAsync();
+
+            if (post == null) return NotFound(ApiResponse<string>.FailureResult("Post not found"));
+
+            return Ok(ApiResponse<postsDto>.SuccessResult(post));
+        }
 
 
         [HttpPost]
