@@ -46,7 +46,7 @@ export default function FindExperts() {
                 if (filters.hasGuarantees) params.append('hasGuarantees', true);
                 if (filters.minGuarantees) params.append('minGuarantees', filters.minGuarantees);
                 if (filters.minExperience) params.append('minExperience', filters.minExperience);
-                if (filters.minRating) params.append('minGuarantees', filters.minRating);
+                if (filters.minRating) params.append('minRating', filters.minRating);
                 if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
 
                 const response = await axiosClient.get(`/ExpertProfile?${params.toString()}`);
@@ -248,12 +248,12 @@ export default function FindExperts() {
 
                                     <div className="card-actions">
                                         <button
-                                            className="btn secondary-btn btn-outline"
+                                            className="btn primary-btn btn-outline"
                                             onClick={() => navigate(`/expert/${expert.expertProfileId}`)}>
                                             View Profile
                                         </button>
                                         { expert.consultationEnabled && (
-                                        <button className="btn btn-primary">Book</button>
+                                        <button className="btn secondary-btn btn-outline">Book</button>
                                             )}
                                     </div>
                                 </div>

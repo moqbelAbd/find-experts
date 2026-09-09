@@ -9,6 +9,7 @@ import PostCard
 export default function PostsPage() {
     // API State
     const [posts, setPosts] = useState([]);
+    const [availableFields, setAvailableFields] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // Filter State
@@ -25,6 +26,18 @@ export default function PostsPage() {
             default: return undefined; // 'ALL' sends undefined, meaning no filter is applied
         }
     };
+
+    useEffect(() => {
+        const fetchFields = async () => {
+            try {
+                const response = await axiosClient.get('/Field');
+                setAvailableFields(response.data.data || []);
+            } catch (error) {
+                console.error("Failed to fetch fields", error);
+            }
+        };
+        fetchFields();
+    }, []);
 
     // Fetch data from backend on mount
     useEffect(() => {
@@ -43,11 +56,10 @@ export default function PostsPage() {
 
                 const fetchedData = response.data?.data || response.data;
 
-                if (fetchedData && fetchedData.length > 0) {
                     setPosts(fetchedData);
-                }
             } catch (error) {
                 console.warn("error fetching posts", error);
+            setPosts([]);
 
             } finally {
                 setIsLoading(false);
@@ -110,9 +122,13 @@ export default function PostsPage() {
                 <div className="filter-dropdowns">
                     <select value={fieldFilter} onChange={(e) => setFieldFilter(e.target.value)} className="filter-select">
                         <option value="">All Fields</option>
-                        <option value="software">Software Engineering</option>
-                        <option value="design">Design</option>
-                        <option value="marketing">Marketing</option>
+                        {availableFields.map(field => {
+                            return (
+                                <option key={field.fieldId } value={field.fieldId }>
+                                    {field.name || field.fieldName}
+                                </option>
+                            );
+                        })}
                     </select>
 
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="filter-select">

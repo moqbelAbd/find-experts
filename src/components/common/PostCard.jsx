@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {X,MessageCircle, Users, Briefcase, Building, MapPin, Banknote, Clock, Edit, Trash2, Lock} from 'lucide-react';
+import {X,MessageCircle, Users, Briefcase, Building, MapPin, Banknote, Clock, Edit, Trash2, Undo2, Lock} from 'lucide-react';
 import { useNavigate , Link} from 'react-router-dom';
 import './post-card.css';
 import { getUserIdFromToken } from '../../utils/authUtils.js';
@@ -149,23 +149,34 @@ export default function PostCard({ post }) {
                 <span className="post-time">{getTimeAgo(post.createdAt)}</span>
                 </div>
 
-                <div style={{display:"flex", gap:"8px"}}>
-                    {isAuthor && (
+                <div style={{display:"flex", gap:"8px"}} >
+                    {isAuthor &&  (
                         <>
                             {/* Only show Close if it's not already closed */}
-                            {post.postStatus !== 'Closed' && post.postStatus !== 2 && (
+                            {post.postStatus !== 3 && post.postStatus !== 2 && (
                                 <button className="btn-edit-post" onClick={() => handleStatusChange(2)} title="Close Post">
                                     <Lock size={16} />
                                 </button>
                             )}
 
+                            {post.postStatus !== 3 && (
                             <button className="btn-edit-post" onClick={handleEditClick} title="Edit Post">
                                 <Edit size={16} />
                             </button>
+                            )}
+                            {post.postStatus !== 3 && (
 
-                            <button className="btn-edit-post" onClick={() => handleStatusChange(3)} title="Delete Post" style={{ color: 'var(--danger)' }}>
-                                <Trash2 size={16} />
-                            </button>
+                                <button className="btn-edit-post" onClick={() => handleStatusChange(3)} title="Delete Post" style={{ color: 'var(--danger)' }}>
+                                    <Trash2 size={16} />
+                                </button>
+                            )}
+                            {post.postStatus === 3 && (
+
+                                <button className="btn-edit-post" onClick={() => handleStatusChange(1)} title="Undo delete Post" style={{ color: 'var(--danger)' }}>
+                                    <Undo2 size={16} />
+                                </button>
+                            )}
+
                         </>
                     )}
                 <div className={`post-badge ${config.badgeClass}`}>
