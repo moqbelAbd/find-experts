@@ -207,3 +207,119 @@
     border-color: var(--primary);
     background-color: var(--surface);
 }
+
+/*interests model*/
+
+.interests-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.interests-modal-content {
+    background: var(--surface, #ffffff);
+    width: 90%;
+    max-width: 450px;
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    padding: 24px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.interests-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+.interests-modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-main, #111827);
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted, #6b7280);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.close-modal-btn:hover {
+    color: var(--danger, #ef4444);
+}
+
+.interests-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.interest-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-md, 8px);
+    transition: background-color 0.2s ease;
+}
+
+.interest-item:hover {
+    background-color: var(--bg-main, #f9fafb);
+}
+
+.interest-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.interest-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.interest-name {
+    font-weight: 600;
+    color: var(--text-main, #111827);
+    text-decoration: none;
+}
+
+.interest-name:hover {
+    color: var(--primary, #2563eb);
+    text-decoration: underline;
+}
+
+.interest-time {
+    font-size: 0.8rem;
+    color: var(--text-muted, #6b7280);
+}
+
+.interests-empty-message {
+    text-align: center;
+    padding: 20px;
+}
+
+.interests-empty-message.muted {
+    color: var(--text-muted, #6b7280);
+}

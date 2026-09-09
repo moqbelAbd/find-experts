@@ -1,5 +1,5 @@
-import React from 'react';
-import {MessageCircle, Users, Briefcase, Building, MapPin, Banknote, Clock, Edit, Trash2, Lock} from 'lucide-react';
+import React, {useState} from 'react';
+import {X,MessageCircle, Users, Briefcase, Building, MapPin, Banknote, Clock, Edit, Trash2, Lock} from 'lucide-react';
 import { useNavigate , Link} from 'react-router-dom';
 import './post-card.css';
 import { getUserIdFromToken } from '../../utils/authUtils.js';
@@ -18,19 +18,72 @@ export default function PostCard({ post }) {
     const isJob = normalizedType === '3' || normalizedType === 'JOB';
     const isService = normalizedType === '2' || normalizedType === 'SERVICE';
 
+    const isExpired = post.postDeadLine ? new Date(post.postDeadLine) <= new Date() : false;
+    const isClosed = post.postStatus === 'Closed' || post.postStatus !== 1 || isExpired;
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [interests, setInterests] = useState([]);
+    const [isLoadingInterests, setIsLoadingInterests] = useState(false);
+
+    const handleExpressInterest = async () => {
+        if (!currentUserId) {
+            toast.error("Please sign in to apply.");
+            return navigate('/login');
+        }
+
+        try {
+            await axiosClient.post(`/postinterest/${post.postId}`);
+            toast.success("Successfully applied!");
+            // Optionally, visually update the applicants count here
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to apply.");
+        }
+    };
+
+    const handleViewInterests = async () => {
+        setIsModalOpen(true);
+        setIsLoadingInterests(true);
+        try {
+            const res = await axiosClient.get(`/postinterest/${post.postId}`);
+            setInterests(res.data?.data || res.data || []);
+        } catch (error) {
+            toast.error("Failed to load applicants.");
+            setIsModalOpen(false);
+        } finally {
+            setIsLoadingInterests(false);
+        }
+    };
+
+    // --- Dynamic Configuration based on Authorship ---
     const getTypeConfig = () => {
-        switch (normalizedType) {
-            case '1':
-            case 'QUESTION':
-                return { badgeClass: 'badge-question', label: 'Question', actionText: 'Answer' };
-            case '2':
-            case 'SERVICE':
-                return { badgeClass: 'badge-service', label: 'Service', actionText: 'I Can Help' };
-            case '3':
-            case 'JOB':
-                return { badgeClass: 'badge-job', label: 'Job', actionText: 'I\'m Suitable' };
-            default:
-                return { badgeClass: 'badge-default', label: 'Post', actionText: 'View' };
+        if (isAuthor) {
+            switch (normalizedType) {
+                case '1':
+                case 'QUESTION':
+                    return { badgeClass: 'badge-question', label: 'Question', actionText: 'View Answers', actionClick: () => navigate(`/post/${post.postId}`) };
+                case '2':
+                case 'SERVICE':
+                    return { badgeClass: 'badge-service', label: 'Service', actionText: 'View Interests', actionClick: handleViewInterests };
+                case '3':
+                case 'JOB':
+                    return { badgeClass: 'badge-job', label: 'Job', actionText: 'View Applicants', actionClick: handleViewInterests };
+                default:
+                    return { badgeClass: 'badge-default', label: 'Post', actionText: 'View', actionClick: () => navigate(`/post/${post.postId}`) };
+            }
+        } else {
+            switch (normalizedType) {
+                case '1':
+                case 'QUESTION':
+                    return { badgeClass: 'badge-question', label: 'Question', actionText: 'Answer', actionClick: () => navigate(`/post/${post.postId}`) };
+                case '2':
+                case 'SERVICE':
+                    return { badgeClass: 'badge-service', label: 'Service', actionText: isClosed? 'Closed' : 'I Can Help', actionClick: handleExpressInterest };
+                case '3':
+                case 'JOB':
+                    return { badgeClass: 'badge-job', label: 'Job', actionText: isClosed? 'Closed' : "I'm Suitable", actionClick: handleExpressInterest };
+                default:
+                    return { badgeClass: 'badge-default', label: 'Post', actionText: 'View', actionClick: () => navigate(`/post/${post.postId}`) };
+            }
         }
     };
 
@@ -41,7 +94,6 @@ export default function PostCard({ post }) {
             case '2': return 'Part-Time';
             case '3': return 'Contract';
             case '4': return 'Freelance';
-            case 'FullTime': return 'Full-Time'; // Fallback if backend sends strings
             default: return 'Full-Time'; // Default fallback
         }
     };
@@ -51,7 +103,6 @@ export default function PostCard({ post }) {
             case '1': return 'On-Site';
             case '2': return 'Hybrid';
             case '3': return 'Remote';
-            case 'OnSite': return 'On-Site';
             default: return 'Remote'; // Default fallback
         }
     };
@@ -143,7 +194,7 @@ export default function PostCard({ post }) {
                         </span>
                     )}
                 </p>
-                
+
                 {/* Distinct Job Information Box */}
                 {isJob && (
                     <div className="job-details-box">
@@ -195,27 +246,67 @@ export default function PostCard({ post }) {
 
             <div className="post-card-footer">
                 <div className="post-metrics">
-                    <span className="metric">
+                        <Link to={`/post/${post.postId}`} >
+                         <span className="metric" style={{color: 'green'}}>
                         <MessageCircle size={16} /> {post.commentsCount || 0} {(post.commentsCount === 1) ? 'answer' : 'comments'}
-                    </span>
+                         </span>
+                        </Link>
 
                     {isService && (
+                        <button onClick={handleViewInterests}>
                         <span className="metric">
                             <Users size={16} /> {post.interestedCount || 0} interested
                         </span>
+                        </button>
                     )}
 
                     {isJob && (
+                        <button onClick={handleViewInterests}>
                         <span className="metric">
                             <Briefcase size={16} /> {post.applicantsCount || 0} applicants
                         </span>
+                        </button>
                     )}
                 </div>
 
-                <button className="btn-action">
+                <button className="btn-action" onClick={config.actionClick}>
                     {config.actionText}
                 </button>
             </div>
+            {isModalOpen && (
+                <div className="interests-modal-overlay">
+                    <div className="interests-modal-content">
+                        <div className="interests-modal-header">
+                            <h3>{isJob ? 'Job Applicants' : 'Interested Experts'}</h3>
+                            <button onClick={() => setIsModalOpen(false)} className="close-modal-btn">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="interests-list">
+                            {isLoadingInterests ? (
+                                <p className="interests-empty-message">Loading experts...</p>
+                            ) : interests.length === 0 ? (
+                                <p className="interests-empty-message muted">No one has applied yet.</p>
+                            ) : (
+                                interests.map(interest => (
+                                    <div key={interest.expertId} className="interest-item">
+                                        <Link to={`/expert/${interest.expertId}`}>
+                                            <img src={interest.avatar || 'https://i.pravatar.cc/150'} alt={interest.fullName} className="interest-avatar" />
+                                        </Link>
+                                        <div className="interest-info">
+                                            <Link to={`/expert/${interest.expertId}`} className="interest-name">
+                                                {interest.fullName}
+                                            </Link>
+                                            <span className="interest-time">Applied {getTimeAgo(interest.appliedAt)}</span>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
