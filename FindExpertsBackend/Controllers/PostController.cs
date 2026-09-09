@@ -71,7 +71,7 @@ namespace FindExpertsBackend.Controllers
             if (authorId.HasValue)
             {
                 query = query.Where(p => p.AuthorId == authorId);
-                query = query.Where(p => p.PostStatus == PostStatusEnum.Open || p.PostStatus == PostStatusEnum.Completed);
+                query = query.Where(p => p.PostStatus != PostStatusEnum.Deleted );
             }
             else
             {
@@ -384,6 +384,8 @@ namespace FindExpertsBackend.Controllers
                 post.PostStatus = PostStatusEnum.Completed;
             else if (Status == 3)
                 post.PostStatus = PostStatusEnum.Cancelled;
+            else if (Status == 1)
+                post.PostStatus = PostStatusEnum.Open;
 
             post.UpdatedAt = DateTime.UtcNow;
 
