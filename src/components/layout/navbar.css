@@ -61,6 +61,10 @@
     gap: 24px;
 }
 
+.header-avatar:hover{
+    scale: 1.05;
+    box-shadow: 10px 10px 10px var(--surface);
+}
 .btn-login {
     color: var(--primary);
     font-weight: 600;
@@ -80,6 +84,25 @@
 .btn-get-started:hover {
     background-color: var(--accent-hover);
     text-decoration: none;
+}
+
+
+.btn-logout {
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    color: var(--danger);
+    border-radius: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color var(--transition-base);
+}
+
+.btn-logout:hover {
+    background-color: var(--danger-bg);
 }
 
 /* Authenticated User Styles */

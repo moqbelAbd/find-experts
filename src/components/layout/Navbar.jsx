@@ -6,6 +6,7 @@ import './navbar.css';
 import logo from "../../assets/Logo/platform logo.png";
 
 import React, { useState } from "react";
+import {getUserIdFromToken} from "../../utils/authUtils.js";
 
 export default function Navbar() {
     const { user, token, logout } = useAuth();
@@ -13,6 +14,7 @@ export default function Navbar() {
 
     const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
     const closeMenu = () => setMobileMenuOpen(false);
+    const userId = getUserIdFromToken();
 
     return (
         <nav className="navbar-container">
@@ -29,7 +31,10 @@ export default function Navbar() {
                 {token ? (
                     <>
                         <NavLink to="/dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                            Home
+                            Dashboard
+                        </NavLink>
+                        <NavLink to={`/profile/${userId}`} onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                            My Profile
                         </NavLink>
                         <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Find Experts
@@ -37,9 +42,7 @@ export default function Navbar() {
                         <NavLink to="/posts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Posts
                         </NavLink>
-                        <NavLink to="/consult" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                            Consult
-                        </NavLink>
+
                     </>
                 ) : (
                     <>
@@ -65,7 +68,22 @@ export default function Navbar() {
                                 <span className="notification-badge">2</span>
                             </div>
 
-                            <ProfileDropdown user={user} logout={logout} />
+                            <div className="logout-container">
+                                <button
+                                    onClick={() => logout() }
+                                    className="btn-logout"
+                                >
+                                    Log out
+                                </button>
+                            </div>
+
+                            <NavLink to={`/profile/${userId}`} onClick={closeMenu} className= "header-avatar" >
+                            <img
+                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || "User"}&background=F1FAF6&color=12372A`}
+                                alt="Avatar"
+                                className="avatar"
+                            />
+                            </NavLink>
                         </>
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

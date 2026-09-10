@@ -62,24 +62,4 @@
     text-decoration: none;
 }
 
-.dropdown-logout-container {
-    border-top: 1px solid var(--border);
-    padding: 8px 0;
-}
 
-.dropdown-btn-logout {
-    width: 100%;
-    text-align: left;
-    padding: 10px 16px;
-    color: var(--danger);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color var(--transition-base);
-}
-
-.dropdown-btn-logout:hover {
-    background-color: var(--danger-bg);
-}

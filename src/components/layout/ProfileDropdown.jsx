@@ -58,17 +58,7 @@ export default function ProfileDropdown({ user, logout }) {
                         </Link>
                     </div>
 
-                    <div className="dropdown-logout-container">
-                        <button
-                            onClick={() => {
-                                setIsOpen(false);
-                                logout();
-                            }}
-                            className="dropdown-btn-logout"
-                        >
-                            Log out
-                        </button>
-                    </div>
+
                 </div>
             )}
         </div>
