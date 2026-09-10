@@ -143,7 +143,7 @@ export default function PostCard({ post }) {
 
                 <div className="header-left" style={{display: 'flex', alignItems: 'center',gap: '12px'}}>
                 <Link to={`/profile/${post.authorId}`} className="post-author">
-                    <img src={post.authorAvatar || 'https://i.pravatar.cc/150'} alt={post.authorName} className="author-avatar" />
+                    <img src={post.authorAvatar || `https://ui-avatars.com/api/?name=${post.authorName}`} alt={post.authorName} className="author-avatar" />
                     <span className="author-name">{post.authorName || 'Unknown User'}</span>
                 </Link>
                 <span className="post-time">{getTimeAgo(post.createdAt)}</span>
@@ -303,7 +303,7 @@ export default function PostCard({ post }) {
                                 interests.map(interest => (
                                     <div key={interest.expertId} className="interest-item">
                                         <Link to={`/expert/${interest.expertId}`}>
-                                            <img src={interest.avatar || 'https://i.pravatar.cc/150'} alt={interest.fullName} className="interest-avatar" />
+                                            <img src={interest.avatar || `https://ui-avatars.com/api/?name=${interest.fullName}`} alt={interest.fullName} className="interest-avatar" />
                                         </Link>
                                         <div className="interest-info">
                                             <Link to={`/expert/${interest.expertId}`} className="interest-name">

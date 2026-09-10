@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axiosClient from "../../api/axiosClient.js";
 import { Search, MapPin, Star } from 'lucide-react';
 import './find-experts.css';
@@ -253,7 +253,7 @@ export default function FindExperts() {
                                             View Profile
                                         </button>
                                         { expert.consultationEnabled && (
-                                        <button className="btn secondary-btn btn-outline">Book</button>
+                                        <Link to={`/book/${expert.expertProfileId}`} className="btn secondary-btn btn-outline">Book</Link>
                                             )}
                                     </div>
                                 </div>
