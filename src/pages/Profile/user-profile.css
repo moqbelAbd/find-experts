@@ -42,7 +42,6 @@
     height: 130px;
     border-radius: 50%;
     border: 3px solid var(--surface);
-    background-color: var(--primary);
     color: #ffffff;
     display: flex;
     align-items: center;

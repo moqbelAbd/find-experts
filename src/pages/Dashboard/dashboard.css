@@ -1,0 +1,368 @@
+/* dashboard.css - Reusable layout for User & Expert Dashboards */
+
+.dashboard-wrapper {
+    background-color: var(--bg-main);
+    min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+/* --- Header Area --- */
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dash-title-group h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.dash-title-group p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.dash-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dash-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.dash-user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: var(--border);
+}
+
+.dash-user-meta h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.dash-user-meta p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* --- Stats Grid --- */
+.dash-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.dash-stat-card {
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    flex-direction: column;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    justify-items: center;
+}
+
+.dash-stat-icon {
+    margin-bottom: 16px;
+    display: flex;
+}
+
+.dash-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    line-height: 1;
+}
+
+.dash-stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* --- Main Content & Tabs --- */
+.dash-content-card {
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.dash-tabs {
+    display: flex;
+    gap: 32px;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    overflow-x: auto;
+}
+
+.dash-tab-btn {
+    padding: 20px 0;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.dash-tab-btn:hover {
+    color: var(--primary);
+}
+
+.dash-tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.dash-tab-badge {
+    background-color: var(--bg-main);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.dash-tab-btn.active .dash-tab-badge {
+    background-color: var(--surface);
+    color: var(--primary);
+}
+
+.dash-tab-body {
+    padding: 24px;
+}
+
+/* --- List Items (Bookings, etc) --- */
+.dash-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dash-list-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: box-shadow var(--transition-base);
+    justify-content: space-between;
+}
+
+.dash-list-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.dash-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dash-item-profile {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.dash-item-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: var(--border);
+}
+
+.dash-item-details h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.dash-item-details .job-title {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.dash-item-details .meta-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* --- Action Footer (For Cancel Button) --- */
+.dash-item-footer {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* --- Badges --- */
+.status-badge {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+}
+
+.badge-confirmed { background-color: #d1fae5; color: #065f46; }
+.badge-pending { background-color: #fef3c7; color: #92400e; }
+.badge-completed { background-color: #e0e7ff; color: #3730a3; }
+.badge-cancelled { background-color: var(--danger-bg); color: var(--danger); }
+.badge-default { background-color: var(--bg-main); color: var(--text-muted); }
+
+/* --- Meeting Box --- */
+.dash-meeting-box {
+    margin-top: 20px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dash-meeting-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dash-meeting-icon {
+    color: var(--primary);
+}
+
+.dash-meeting-text h5 {
+    color: var(--primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.dash-meeting-text a {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+
+
+
+/*Expert dashboard*/
+
+/* --- Action Button Groups for Expert Dashboard --- */
+.dash-action-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+    border: 1px solid var(--success);
+}
+.btn-success:hover { background-color: #146c43; }
+
+.guarantee-badge-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.guarantee-badge-container .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* --- Inline Form for Meeting Links --- */
+.dash-inline-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 350px;
+    margin-top: 16px;
+    background-color: var(--surface);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.dash-inline-input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    width: 100%;
+    outline: none;
+}
+
+.dash-inline-input:focus {
+    border-color: var(--accent);
+}
+
+.dash-inline-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+
+/* --- Mobile Adjustments --- */
+@media (max-width: 768px) {
+    .dash-header {
+        flex-direction: column;
+    }
+
+    .dash-header-actions {
+        width: 100%;
+        flex-direction: row-reverse;
+    }
+    .dash-meeting-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dash-meeting-box .btn {
+        width: 100%;
+    }
+
+    .dash-list-item {
+        display: block;
+    }
+}

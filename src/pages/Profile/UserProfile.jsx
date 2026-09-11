@@ -130,7 +130,7 @@ export default function UserProfile() {
                         <Link to={`/expert/${profile.expertProfileId}`} className="btn primary-btn">
                             View Expert Profile
                         </Link>
-                    ) : (
+                    ) : isOwner && (
                         <Link to="/become-expert" className="btn outline-btn">
                             Go Expert
                         </Link>
@@ -142,11 +142,10 @@ export default function UserProfile() {
                 <div className="profile-content">
                     <div className="profile-avatar-section">
                         <div className="profile-avatar-circle">
-                            {profile.avatar ? (
-                                <img src={profile.avatar} alt="Profile" />
-                            ) : (
-                                initials
-                            )}
+                            <img
+                                src={profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName || 'User')}`}
+                                alt="Profile"
+                            />
                         </div>
                         { isOwner && (
                         <><button onClick={() => fileInputRef.current.click()} className="btn-upload-photo">
@@ -220,7 +219,7 @@ export default function UserProfile() {
                         ))
                     ) : (
                         <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-                            No posts found matching your criteria.
+                            No posts found.
                         </div>
                     )}
                 </div>

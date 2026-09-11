@@ -68,7 +68,7 @@ export default function BookingPage() {
             await axiosClient.post('/Book', payload);
 
             toast.success('Consultation requested successfully!', { id: toastId });
-            setTimeout(() => navigate('/dashboard'), 1500); // Redirect after success
+            setTimeout(() => navigate('/user-dashboard'), 1500); // Redirect after success
 
         } catch (error) {
             toast.error(error.response?.data?.message || 'Booking failed.', { id: toastId });

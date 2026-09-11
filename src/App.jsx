@@ -17,6 +17,8 @@ import CreatePost from "./pages/PostsPage/CreatePost.jsx";
 import EditPostPage from "./pages/PostsPage/EditPostPage.jsx";
 import PostPage from "./pages/PostsPage/PostPage.jsx";
 import BookingPage from "./pages/Book/BookingPage.jsx";
+import UserDashboard from "./pages/Dashboard/UserDashboard.jsx";
+import ExpertDashboard from "./pages/Dashboard/ExpertDashboard.jsx";
 
 export default function App() {
     return (
@@ -43,10 +45,11 @@ export default function App() {
 
                         {/* Protected Routes Group */}
                         <Route element={<ProtectedRoute />}>
-                            <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/become-expert" element={<BecomeExpert />} />
                             <Route path="/create-post" element={<CreatePost />} />
                             <Route path="/book/:expertId" element={<BookingPage />} />
+                            <Route path="/user-dashboard" element={<UserDashboard />} />
+                                <Route path="/expert-dashboard/:expertProfileId" element={<ExpertDashboard />} />
                         </Route>
 
                     </Route>

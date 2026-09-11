@@ -30,7 +30,7 @@ export default function Navbar() {
             <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                 {token ? (
                     <>
-                        <NavLink to="/dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                        <NavLink to="/user-dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             Dashboard
                         </NavLink>
                         <NavLink to={`/profile/${userId}`} onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>

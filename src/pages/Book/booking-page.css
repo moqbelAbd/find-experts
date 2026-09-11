@@ -123,14 +123,14 @@
 .badge-silver .dot { background-color: var(--text-muted); }
 
 .badge-bronze {
-    background-color: #ffedd5;
-    color: #9a3412;
-    border: 1px solid #fed7aa;
+    background-color: #ffedd5; /* Soft orange/copper background */
+    color: #9a3412;            /* Dark copper text */
+    border: 1px solid #fed7aa; /* Light copper border */
 }
 .badge-bronze .dot { background-color: #f97316; }
 
 .badge-green {
-    background-color: var(--surface);
+    background-color: #a5f1c6;
     color: var(--primary);
     border: 1px solid var(--accent);
 }

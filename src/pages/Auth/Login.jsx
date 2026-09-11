@@ -24,7 +24,7 @@ export default function Login() {
 
         try {
             await login(formData.email, formData.password);
-            navigate('/dashboard');
+            navigate('/user-dashboard');
         } catch (err) {
             const apiMessage = err.response?.data?.message || err.message || 'Failed to authenticate.';
             setError(apiMessage);
