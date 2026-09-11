@@ -16,6 +16,7 @@ import PostsPage from "./pages/PostsPage/PostsPage.jsx";
 import CreatePost from "./pages/PostsPage/CreatePost.jsx";
 import EditPostPage from "./pages/PostsPage/EditPostPage.jsx";
 import PostPage from "./pages/PostsPage/PostPage.jsx";
+import BookingPage from "./pages/Book/BookingPage.jsx";
 
 export default function App() {
     return (
@@ -45,6 +46,7 @@ export default function App() {
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/become-expert" element={<BecomeExpert />} />
                             <Route path="/create-post" element={<CreatePost />} />
+                            <Route path="/book/:expertId" element={<BookingPage />} />
                         </Route>
 
                     </Route>
