@@ -323,7 +323,7 @@ namespace FindExpertsBackend.Migrations
                     BookingDuration = table.Column<int>(type: "int", nullable: false),
                     BookingPrice = table.Column<decimal>(type: "decimal(7,2)", nullable: false),
                     BookingStatus = table.Column<int>(type: "int", nullable: false),
-                    MeetingUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    MeetingUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using FindExpertsBackend.Models.Enums;
 
 namespace FindExpertsBackend.Controllers
 {
@@ -51,6 +52,10 @@ namespace FindExpertsBackend.Controllers
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid token"));
+
+            var post = await _context.Posts.FindAsync(dto.PostId);
+            if(post != null && post.PostStatus != PostStatusEnum.Open)
+                return BadRequest(ApiResponse<string>.FailureResult("Currently the post isn't opend for comments"));
 
             var comment = new Comment 
             {
