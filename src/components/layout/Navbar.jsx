@@ -77,13 +77,14 @@ export default function Navbar() {
                                 </button>
                             </div>
 
-                            <NavLink to={`/profile/${userId}`} onClick={closeMenu} className= "header-avatar" >
-                            <img
-                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || "User"}&background=F1FAF6&color=12372A`}
-                                alt="Avatar"
-                                className="avatar"
-                            />
-                            </NavLink>
+                            {/*<NavLink to={`/profile/${userId}`} onClick={closeMenu} className= "header-avatar" >*/}
+                            {/*<img*/}
+                            {/*    src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.fullName || "User"}&background=F1FAF6&color=12372A`}*/}
+                            {/*    alt="Avatar"*/}
+                            {/*    className="avatar"*/}
+                            {/*/>*/}
+                            {/*</NavLink>*/}
+
                         </>
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

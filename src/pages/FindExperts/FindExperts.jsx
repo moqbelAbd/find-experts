@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axiosClient from "../../api/axiosClient.js";
-import { Search, MapPin, Star } from 'lucide-react';
+import {Search, MapPin, Star, Banknote} from 'lucide-react';
 import './find-experts.css';
 
 export default function FindExperts() {
@@ -113,7 +113,7 @@ export default function FindExperts() {
                 </div>
 
                 <div className="filter-group">
-                    <label>Max Price per Session ($)</label>
+                    <label>Max Price per Session </label>
                     <input
                         type="number"
                         name="maxPrice"
@@ -215,7 +215,9 @@ export default function FindExperts() {
                                             </div>
                                         </div>
                                         <div className="header-price">
-                                            <h4>${expert.startingPrice || '--'}</h4>
+                                            <h4 style={{display:"flex", alignItems:'center', gap:'4px'}}>
+                                                <Banknote size={18} style={{marginTop:'4px'}}/>
+                                                {expert.startingPrice || '--'}</h4>
                                             <span>/session</span>
                                         </div>
                                     </div>
@@ -227,7 +229,7 @@ export default function FindExperts() {
                                         </div>
                                     )}
 
-                                    <p className="expert-bio">{expert.bio?.substring(0, 120)}...</p>
+                                    <p className="expert-bio">{expert.bio?.substring(0, 140)}...</p>
 
                                     <div className="skills-tags">
                                         {expert.skills.slice(0, 4).map((skill, i) => (

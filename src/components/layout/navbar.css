@@ -168,11 +168,6 @@
     position: relative;
 }
 
-.nav-left, .nav-right {
-    display: flex;
-    align-items: center;
-}
-
 .nav-brand {
     display: flex;
     align-items: center;
@@ -292,6 +287,11 @@
 
 /* Responsive Breakpoint for Mobile */
 @media (max-width: 900px) {
+
+    .nav-logo{
+        width: 120px;
+        height: auto;
+    }
     .navbar-container {
         padding: 16px 20px;
     }
@@ -299,7 +299,9 @@
     .mobile-menu-btn {
         display: block;
     }
-
+    .btn-logout{
+        padding: 8px 10px;
+    }
     /* Transform links into a dropdown drawer */
     .nav-links {
         position: absolute;
