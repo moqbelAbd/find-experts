@@ -1,4 +1,5 @@
-﻿using FindExpertsBackend.DTOs;
+﻿using FindExpertsBackend.Data;
+using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,15 +18,18 @@ namespace FindExpertsBackend.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole <Guid> > _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole <Guid> > roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -110,13 +114,17 @@ namespace FindExpertsBackend.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
+            
             if (userId == null)
             {
                 return Unauthorized();
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+
+            var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
                 return NotFound(ApiResponse<object>.FailureResult("User profile not found."));
@@ -127,6 +135,7 @@ namespace FindExpertsBackend.Controllers
                 user.Id,
                 user.Email,
                 user.FullName,
+                user.Avatar,
                 Roles = await _userManager.GetRolesAsync(user)
             };
 
