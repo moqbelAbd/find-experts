@@ -47,10 +47,11 @@ namespace FindExpertsBackend.Models.Enums
 
     public enum BookingStatusEnum
     {
-        Pending = 1,
-        Accepted = 2,
-        Completed = 3,
-        Cancelled = 4
+        Accepted = 1,
+        Rejected = 2,
+        Pending = 3,
+        Completed = 4,
+        Cancelled = 5
     }
 
     public enum NotificationTypeEnum

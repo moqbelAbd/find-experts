@@ -61,7 +61,7 @@ namespace FindExpertsBackend.Controllers
             var upcomingBookings = await _context.Bookings
                 .Where(b => b.ExpertId == expertId
                          && b.BookingStartTime >= currentUtc
-                         && b.BookingStatus != BookingStatusEnum.Cancelled)
+                         && b.BookingStatus != BookingStatusEnum.Cancelled && b.BookingStatus != BookingStatusEnum.Rejected )
                 .Select(b => new BookingInformationDto.BookedSlotDto
                 {
                     Start = b.BookingStartTime,
@@ -117,8 +117,8 @@ namespace FindExpertsBackend.Controllers
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token"));
 
 
-            var userExpert = await _context.ExpertProfiles.FirstAsync(ep => ep.UserId == userId);
-            var userExpertId = userExpert.ExpertProfileId;
+            var userExpert = await _context.ExpertProfiles.FirstOrDefaultAsync(ep => ep.UserId == userId);
+            var userExpertId = userExpert?.ExpertProfileId;
 
             if (dto.ExpertId == userExpertId)
                 return BadRequest(ApiResponse<string>.FailureResult("You can't book yourself"));
@@ -132,7 +132,7 @@ namespace FindExpertsBackend.Controllers
             // 2. Check for conflicts with existing non-cancelled bookings
             var hasConflict = await _context.Bookings
                 .AnyAsync(b => b.ExpertId == dto.ExpertId
-                            && b.BookingStatus != BookingStatusEnum.Cancelled
+                            && b.BookingStatus != BookingStatusEnum.Cancelled && b.BookingStatus != BookingStatusEnum.Rejected
                             && b.BookingStartTime < requestedEnd
                             && b.BookingStartTime.AddMinutes(b.BookingDuration) > requestedStart);
 
@@ -157,5 +157,83 @@ namespace FindExpertsBackend.Controllers
 
             return Ok(ApiResponse<string>.SuccessResult("Consultation requested successfully."));
         }
+
+
+        [HttpPut("{bookingId}/status")]
+        [Authorize]
+        public async Task<IActionResult> UpdateBookingStatus(Guid bookingId, [FromBody] UpdateBookingStatusDto dto )
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return Unauthorized(ApiResponse<string>.FailureResult("Invalid token"));
+
+            // Fetch booking and include the Expert to verify ownership
+            var booking = await _context.Bookings
+                .Include(b => b.Expert)
+                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+
+            if (booking == null)
+                return NotFound(ApiResponse<string>.FailureResult("Booking not found."));
+
+            bool isClient = booking.UserId == userId;
+            bool isExpert = booking.Expert.UserId == userId;
+
+            if (!isClient && !isExpert)
+                return Forbid(); // The user has no relation to this booking
+
+            var currentUtc = DateTime.UtcNow;
+
+            // --- RULE 1: CLIENT LOGIC ---
+            if (isClient)
+            {
+                if (dto.NewStatus != BookingStatusEnum.Cancelled)
+                    return BadRequest(ApiResponse<string>.FailureResult("Clients can only cancel bookings."));
+
+                if (booking.BookingStatus != BookingStatusEnum.Pending && booking.BookingStatus != BookingStatusEnum.Accepted)
+                    return BadRequest(ApiResponse<string>.FailureResult("You can only cancel pending or accepted bookings."));
+
+                booking.BookingStatus = BookingStatusEnum.Cancelled;
+                booking.UpdatedAt = currentUtc;
+
+            }
+
+            // --- RULE 2: EXPERT LOGIC ---
+            else if (isExpert)
+            {
+                // Expert Accepting or Rejecting
+                if (dto.NewStatus == BookingStatusEnum.Accepted || dto.NewStatus == BookingStatusEnum.Rejected)
+                {
+                    if (booking.BookingStatus != BookingStatusEnum.Pending)
+                        return BadRequest(ApiResponse<string>.FailureResult($"You can only {dto.NewStatus} a Pending booking."));
+
+                    booking.BookingStatus = dto.NewStatus;
+                    booking.UpdatedAt = currentUtc;
+                    booking.MeetingUrl = dto.MeetingLink.Trim();
+                }
+                // Expert Marking as Completed
+                else if (dto.NewStatus == BookingStatusEnum.Completed)
+                {
+                    if (booking.BookingStatus != BookingStatusEnum.Accepted)
+                        return BadRequest(ApiResponse<string>.FailureResult("Only Accepted bookings can be marked as Completed."));
+
+                    // Ensure the booking end time has actually passed
+                    var endTime = booking.BookingStartTime.AddMinutes(booking.BookingDuration);
+                    if (endTime > currentUtc)
+                        return BadRequest(ApiResponse<string>.FailureResult("You cannot mark a booking as completed before its scheduled end time has passed."));
+
+                    booking.BookingStatus = BookingStatusEnum.Completed;
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<string>.FailureResult("Invalid status update requested."));
+                }
+            }
+
+            booking.UpdatedAt = currentUtc;
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse<string>.SuccessResult("Booking status updated successfully."));
+        }
+
     }
 }

@@ -39,7 +39,7 @@ namespace FindExpertsBackend.Controllers
                 .AnyAsync(pi => pi.PostId == postId && pi.ExpertId == expert.ExpertProfileId);
 
             var post = await _context.Posts.FindAsync(postId);
-            if (post != null && post.PostDeadLine <= DateTime.UtcNow)
+            if (post != null && (post.PostDeadLine <= DateTime.UtcNow || post.PostStatus != Models.Enums.PostStatusEnum.Open ))
                 return BadRequest(ApiResponse<string>.FailureResult("Post is closed"));
 
             if (alreadyApplied)
