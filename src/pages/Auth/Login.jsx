@@ -1,5 +1,6 @@
+import { jwtDecode } from "jwt-decode";
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './auth.css';
 import authImg from '../../assets/login image.jpeg';
@@ -11,6 +12,8 @@ export default function Login() {
 
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
 
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -23,8 +26,36 @@ export default function Login() {
         setError('');
 
         try {
-            await login(formData.email, formData.password);
-            navigate('/admin-dashboard');
+            // 1. Await the login result
+            const result = await login(formData.email, formData.password);
+
+            // 2. Decode the token to find the role
+            const token = result.data.token;
+            const decodedToken = jwtDecode(token);
+
+            // ASP.NET Core usually maps roles to this long URL key, or occasionally just 'role'
+            const roleClaimKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+            const userRoles = decodedToken[roleClaimKey] || decodedToken.role || [];
+
+            // Check if we have a redirect parameter in the URL (from Axios 401)
+            const urlRedirect = searchParams.get('redirect');
+            const stateRedirect = location.state?.from?.pathname;
+            const finalRedirect = urlRedirect || stateRedirect;
+
+            // 3. Navigate based on the role
+            // (Handle both single string role or array of roles)
+            const isAdmin = Array.isArray(userRoles) ? userRoles.includes('Admin') : userRoles === 'Admin';
+            const isExpert = Array.isArray(userRoles) ? userRoles.includes('Expert') : userRoles === 'Expert';
+            if (isAdmin) {
+                // Admins always go to their specific dashboard
+                navigate('/admin-dashboard');
+            } else if (finalRedirect) {
+                // Normal user with a saved redirect destination
+                navigate(finalRedirect);
+            } else {
+                // Normal user who logged in directly -> send to default home/dashboard
+                navigate('/user-dashboard');
+            }
         } catch (err) {
             const apiMessage = err.response?.data?.message || err.message || 'Failed to authenticate.';
             setError(apiMessage);

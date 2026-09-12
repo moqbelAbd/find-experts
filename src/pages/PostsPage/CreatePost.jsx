@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosClient from "../../api/axiosClient";
-import { Plus, X, HelpCircle, Briefcase, Wrench } from 'lucide-react';
+import { Plus,ImagePlus, X, HelpCircle, Briefcase, Wrench } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import './create-post.css';
 import {useNavigate} from "react-router-dom";
@@ -15,6 +15,15 @@ export default function CreatePost({isEdit = false, initialData = null, postId =
     const [availableSkills, setAvailableSkills] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
+
+
+    const [restrictToFieldExperts, setRestrictToFieldExperts] = useState(
+        isEdit && initialData ? (initialData.restrictToFieldExperts || false) : false
+    );
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(
+        isEdit && initialData ? (initialData.attachedPhoto || null) : null
+    );
 
     const workLocationOptions = [
         { id: 1, name: 'On-Site' },
@@ -129,51 +138,92 @@ export default function CreatePost({isEdit = false, initialData = null, postId =
         }));
     };
 
+
+    // Handle photo selection
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const removePhoto = () => {
+        setPhotoFile(null);
+        setPhotoPreview(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
 
         try {
-            const payload = {
-                postTypeId: formData.postTypeId,
-                postTitle: formData.postTitle,
-                postDescription: formData.postDescription,
-                fieldId: parseInt(formData.fieldId),
-                tags: formData.tags,
-            };
+            const submitData = new FormData();
+
+            // --- Base Fields ---
+            submitData.append('PostTypeId', formData.postTypeId);
+            submitData.append('PostTitle', formData.postTitle);
+            submitData.append('PostDescription', formData.postDescription);
+            submitData.append('FieldId', formData.fieldId);
+            submitData.append('RestrictToFieldExperts', restrictToFieldExperts);
 
             if (isEdit && postId) {
-                payload.postId = postId;
+                submitData.append('PostId', postId);
             }
 
+            // --- Photo ---
+            if (photoFile) {
+                submitData.append('AttachedPhoto', photoFile);
+            }
+
+            // --- Tags ---
+            formData.tags.forEach(tag => {
+                submitData.append('Tags', tag);
+            });
+
+            // --- Extended Fields ---
             if (formData.postTypeId === 2 || formData.postTypeId === 3) {
-                payload.postDeadLine = formData.postDeadLine || null;
+                if (formData.postDeadLine) {
+                    submitData.append('PostDeadLine', formData.postDeadLine);
+                }
             }
 
-            if (formData.postTypeId === 2) {
-                payload.budget = formData.budget ? parseInt(formData.budget) : null;
+            if (formData.postTypeId === 2 && formData.budget) {
+                submitData.append('Budget', formData.budget);
             }
 
             if (formData.postTypeId === 3) {
-                payload.company = formData.company;
-                payload.JobLocation = formData.JobLocation;
-                payload.expectedSalary = formData.expectedSalary ? parseInt(formData.expectedSalary) : null;
-                payload.workLocationTypeId = formData.workLocationTypeId ? parseInt(formData.workLocationTypeId) : null;
-                payload.employmentTypeId = formData.employmentTypeId ? parseInt(formData.employmentTypeId) : null;
-                payload.jobLocation = formData.workLocationTypeId === '1' ? formData.jobLocation : null;
+                submitData.append('Company', formData.company);
+                submitData.append('WorkLocationTypeId', formData.workLocationTypeId);
+                submitData.append('EmploymentTypeId', formData.employmentTypeId);
+
+                if (formData.expectedSalary) {
+                    submitData.append('ExpectedSalary', formData.expectedSalary);
+                }
+                if (formData.workLocationTypeId === '1' && formData.jobLocation) {
+                    submitData.append('JobLocation', formData.jobLocation);
+                }
             }
 
+            // --- API Call ---
+            const config = {
+                headers: {'Content-Type': 'multipart/form-data'}
+            };
+
             if (isEdit) {
-                await axiosClient.put('/post', payload);
+                await axiosClient.put('/post', submitData, config);
                 toast.success("Post updated successfully");
             } else {
-                await axiosClient.post('/Post', payload);
+                await axiosClient.post('/Post', submitData, config);
                 toast.success("Post created successfully");
             }
+
             navigate(`/posts`);
 
         } catch (err) {
-            toast.error(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} post.`);        } finally {
+            console.error(err);
+            toast.error(err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} post.`);
+        } finally {
             setIsSubmitting(false);
         }
     };
@@ -241,6 +291,32 @@ export default function CreatePost({isEdit = false, initialData = null, postId =
                         </select>
                     </div>
 
+                    {/* --- Photo Upload Section --- */}
+                    <div className="photo-upload-container">
+                        {!photoPreview ? (
+                            <div>
+                                <input
+                                    type="file"
+                                    id="post-photo-upload"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handlePhotoChange}
+                                />
+                                <label htmlFor="post-photo-upload" className="btn secondary-btn">
+                                    <ImagePlus size={18} style={{ marginRight: '8px' }} />
+                                    Attach Photo
+                                </label>
+                            </div>
+                        ) : (
+                            <div className="photo-preview-box">
+                                <img src={photoPreview} alt="Preview" />
+                                <button type="button" className="btn-remove-photo" onClick={removePhoto}>
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
                     {/* Tags & Skills Integration */}
                     <div className="form-group">
                         <label>Tags (Select from skills below or type custom tag and press Enter)</label>
@@ -285,6 +361,22 @@ export default function CreatePost({isEdit = false, initialData = null, postId =
                         )}
                     </div>
                 </div>
+
+
+                {/* --- Restriction Checkbox (Only show if a field is selected) --- */}
+                {formData.fieldId && (
+                    <div className="checkbox-group">
+                        <input
+                            type="checkbox"
+                            id="restrictExperts"
+                            checked={restrictToFieldExperts}
+                            onChange={(e) => setRestrictToFieldExperts(e.target.checked)}
+                        />
+                        <label htmlFor="restrictExperts">
+                            Restrict interactions (comments/interests) to experts in this field only
+                        </label>
+                    </div>
+                )}
 
                 {/* --- 3. EXTENDED FORM (Service or Job) --- */}
                 {(formData.postTypeId === 2 || formData.postTypeId === 3) && (
@@ -353,7 +445,7 @@ export default function CreatePost({isEdit = false, initialData = null, postId =
                 )}
 
                 <div className="form-actions">
-                    {/* Uses your global primary-btn class */}
+
                     <button type="submit" className="btn primary-btn" disabled={isSubmitting}>
                         {isSubmitting ?
                             (isEdit ? 'Saving...' : 'Publishing...')

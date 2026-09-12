@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const axiosClient = axios.create({
     baseURL: 'https://localhost:7252/api',
@@ -7,7 +8,6 @@ const axiosClient = axios.create({
     },
 });
 
-// Request Interceptor: Attach JWT Bearer Token if present
 axiosClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -19,17 +19,28 @@ axiosClient.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Handle global 401 Unauthorized
 axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401) {
+        // 423 Locked: Banned user
+        if (error.response && error.response.status === 423) {
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            if (window.location.pathname !== '/login') {
+            toast.error(error.response.data.message || "Your account has been suspended.");
+            setTimeout(() => {
                 window.location.href = '/login';
-            }
+            }, 2500);
         }
+        // 401 Unauthorized: Guest trying to access protected resource
+        else if (error.response && error.response.status === 401) {
+            localStorage.removeItem('token');
+
+            // Capture the current page path
+            const currentPath = window.location.pathname + window.location.search;
+
+            // Redirect to login and pass the captured path
+            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        }
+
         return Promise.reject(error);
     }
 );

@@ -205,7 +205,13 @@ export default function PostCard({ post }) {
                         </span>
                     )}
                 </p>
-
+                {post.attachedPhoto && (
+                    <img
+                        src={post.attachedPhoto}
+                        alt="Post Attachment"
+                        className="post-card-image"
+                    />
+                )}
                 {/* Distinct Job Information Box */}
                 {isJob && (
                     <div className="job-details-box">
