@@ -233,7 +233,7 @@ export default function CreatePost({isEdit = false, initialData = null, postId =
 
                     <div className="form-group">
                         <label>Field *</label>
-                        <select name="fieldId" className="form-control" value={formData.fieldId} onChange={handleInputChange} required>
+                        <select name="fieldId" className="form-control" value={formData.fieldId} onChange={handleInputChange} >
                             <option value="">Select a field...</option>
                             {fields.map(f => (
                                 <option key={f.fieldId } value={f.fieldId }>{f.fieldName }</option>

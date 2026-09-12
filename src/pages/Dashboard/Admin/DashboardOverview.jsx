@@ -41,15 +41,14 @@ export default function DashboardOverview() {
 
     // Filter out 0s, but if it's completely empty, provide a gray placeholder ring
     let pieData = [
-        { name: 'Green', value: gStats.greenCount, color: '#22c55e' },
-        { name: 'Bronze', value: gStats.bronzeCount, color: '#d97706' },
-        { name: 'Gold', value: gStats.goldCount, color: '#eab308' },
-        { name: 'Silver', value: gStats.silverCount, color: '#94a3b8' },
+        { name: 'Green', value: gStats.greenCount, fill: '#22c55e' },
+        { name: 'Bronze', value: gStats.bronzeCount, fill: '#d97706' },
+        { name: 'Gold', value: gStats.goldCount, fill: '#eab308' },
+        { name: 'Silver', value: gStats.silverCount, fill: '#94a3b8' },
     ].filter(item => item.value > 0);
 
-    // FIX: If no experts have guarantees, show a gray placeholder so the chart doesn't vanish
     if (pieData.length === 0) {
-        pieData = [{ name: 'No Data', value: 1, color: '#f3f4f6' }];
+        pieData = [{ name: 'No Data', value: 1, fill: '#f3f4f6' }];
     }
 
     const calculatePercentage = (value) => {
@@ -131,11 +130,7 @@ export default function DashboardOverview() {
                                         paddingAngle={2}
                                         dataKey="value"
                                         stroke="none"
-                                    >
-                                        {pieData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Pie>
+                                    />
                                     <RechartsTooltip />
                                 </PieChart>
                             </ResponsiveContainer>

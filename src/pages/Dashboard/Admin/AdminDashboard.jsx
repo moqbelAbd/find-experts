@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './admin-dashboard.css';
 import '../dashboard.css';
 import DashboardOverview from "./DashboardOverview.jsx";
+import DashboardConsultationsTab from "./DashboardConsultationsTab.jsx";
+import DashboardUsersTab from "./DashboardUsersTab.jsx";
 
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('overview');
@@ -27,32 +29,34 @@ export default function AdminDashboard() {
                             Overview
                         </button>
                         <button
-                            className={`dash-tab-btn ${activeTab === 'users' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('users')}
-                        >
-                            Users & Experts
-                        </button>
-                        <button
                             className={`dash-tab-btn ${activeTab === 'consultations' ? 'active' : ''}`}
                             onClick={() => setActiveTab('consultations')}
                         >
                             Consultations
                         </button>
+                        <button
+                            className={`dash-tab-btn ${activeTab === 'users' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('users')}
+                        >
+                            Users & Experts
+                        </button>
+
                     </div>
                 </div>
 
                 {/* Tab Content Routing */}
                 {activeTab === 'overview' && <DashboardOverview />}
 
-                {activeTab === 'users' && (
+                {activeTab === 'consultations' && (
                     <div className="dash-chart-card text-center" style={{ padding: '60px', color: 'var(--text-muted)' }}>
-                        Users & Experts Tab (Coming soon)
+                        <DashboardConsultationsTab></DashboardConsultationsTab>
                     </div>
                 )}
 
-                {activeTab === 'consultations' && (
+
+                {activeTab === 'users' && (
                     <div className="dash-chart-card text-center" style={{ padding: '60px', color: 'var(--text-muted)' }}>
-                        Consultations Tab (Coming soon)
+                        <DashboardUsersTab></DashboardUsersTab>
                     </div>
                 )}
 

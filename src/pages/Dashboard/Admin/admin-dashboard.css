@@ -99,8 +99,299 @@
     font-size: 0.85rem;
 }
 
+
+/* --- Consultations Tab Layout --- */
+.consult-top-section {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.consult-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.consult-stat-card {
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dot-indicator {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-bottom: 12px;
+}
+
+.consult-stat-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.consult-stat-name {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.consult-stat-percent {
+    font-size: 0.75rem;
+    color: #9ca3af; /* Light gray */
+}
+
+/* --- Filter Bar --- */
+.admin-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    background-color: rgb(224 226 227 / 0.52);;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.admin-filter-label {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-right: 8px;
+}
+
+.admin-filter-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-filter-btn:hover {
+    color: var(--text-main);
+    background: var(--surface);
+}
+
+.admin-filter-btn.active {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+
+/* --- Data Table --- */
+.admin-table-container {
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 16px 24px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+}
+
+.admin-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tr:hover {
+    background-color: #fafafa;
+}
+
+
+/* --- Pagination --- */
+.admin-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background-color: #ffffff;
+}
+
+.pagination-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background-color: #ffffff;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: var(--surface);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f9fafb;
+}
+
+/* --- Users Tab Specifics --- */
+.users-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.users-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.admin-search-input {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 250px;
+    outline: none;
+    background-color: #ffffff;
+}
+
+.admin-search-input:focus {
+    border-color: var(--primary);
+}
+
+.results-count {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* User Info Cell */
+.user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e6f4ea; /* Light green for initials */
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    object-fit: cover;
+}
+
+.user-name-text {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.user-email-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Role Badges */
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.role-user { background-color: #f3f4f6; color: #4b5563; }
+.role-expert { background-color: #f3e8ff; color: #7e22ce; }
+
+/* Status Badges */
+.status-badge-outline {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+.status-active-outline { border-color: var(--primary); color: var(--primary); }
+.status-suspended-outline { border-color: var(--danger); color: var(--danger); }
+
+/* Table Action Buttons */
+.table-actions {
+    display: flex;
+    gap: 8px;
+}
+.btn-table-action {
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-view { border: 1px solid var(--border); color: var(--text-main); }
+.btn-view:hover { background-color: var(--surface); }
+.btn-suspend { border: 1px solid var(--danger); color: var(--danger); }
+.btn-suspend:hover { background-color: var(--danger-bg); }
+
+
 @media (max-width: 992px) {
     .dash-chart-grid {
         grid-template-columns: 1fr; /* Stacks charts on smaller screens */
+    }
+}
+
+
+@media (max-width: 1024px) {
+    .consult-top-section {
+        grid-template-columns: 1fr;
     }
 }
