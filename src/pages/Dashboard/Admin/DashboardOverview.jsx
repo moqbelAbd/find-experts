@@ -147,11 +147,11 @@ export default function DashboardOverview() {
                             ) : (
                                 pieData.map((item, index) => (
                                     <div key={index} className="donut-legend-item">
-                                        <div className="legend-label-group">
+                                        <div className="legend-label-group" >
                                             <span className="legend-dot" style={{ backgroundColor: item.color }}></span>
                                             {item.name}
                                         </div>
-                                        <div style={{ textAlign: 'right' }}>
+                                        <div style={{display:'contents'}}>
                                             <span style={{ display: 'block' }}>{item.value.toLocaleString()}</span>
                                             <span className="legend-percentages">{calculatePercentage(item.value)}%</span>
                                         </div>
