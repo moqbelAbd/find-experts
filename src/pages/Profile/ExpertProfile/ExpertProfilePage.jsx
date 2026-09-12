@@ -1,8 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import axiosClient from "../../../api/axiosClient.js";
 import toast from 'react-hot-toast';
-import { Globe, Briefcase, FolderGit2, Award, CalendarClock, Clock, Trash2, Plus, ArrowUp } from 'lucide-react';
+import {
+    Globe,
+    Briefcase,
+    FolderGit2,
+    Award,
+    CalendarClock,
+    Clock,
+    Trash2,
+    Plus,
+    ArrowUp,
+    MessageSquare
+} from 'lucide-react';
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 import './expert-profile-page.css';
 import { getUserIdFromToken } from "../../../utils/authUtils.js"
@@ -18,6 +29,7 @@ export default function ExpertProfilePage() {
 
     const actionsRef = useRef(null);
     const [showArrow, setShowArrow] = useState(false);
+    const navigate = useNavigate();
 
     // Track scroll position to hide/show the arrow
     useEffect(() => {
@@ -229,6 +241,19 @@ export default function ExpertProfilePage() {
         return `${hour}:${minuteString} ${ampm}`;
     };
 
+
+    const handleStartChat = () => {
+        navigate('/chats', {
+            state: {
+                targetUser: {
+                    partnerId: profile.userId,
+                    partnerName: profile.fullName,
+                    partnerAvatar: profile.profilePicture
+                }
+            }
+        });
+    };
+
     return (
         <div className="container expert-profile-container">
 
@@ -242,6 +267,17 @@ export default function ExpertProfilePage() {
                     ) : (
                         <button onClick={() => setIsEditing(true)} className="btn outline-btn">Edit Profile</button>
                     )}
+                </div>
+            )}
+            {!isOwner && (
+                <div className="edit-actions-header" >
+                <button
+                    className="btn primary-btn"
+                    onClick={handleStartChat}
+                >
+                    <MessageSquare size={18} />
+                    Chat
+                </button>
                 </div>
             )}
 

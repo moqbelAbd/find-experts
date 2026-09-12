@@ -20,6 +20,7 @@ import BookingPage from "./pages/Book/BookingPage.jsx";
 import UserDashboard from "./pages/Dashboard/UserDashboard.jsx";
 import ExpertDashboard from "./pages/Dashboard/ExpertDashboard.jsx";
 import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard.jsx";
+import ChatPage from "./pages/Chats/ChatPage.jsx";
 
 export default function App() {
     return (
@@ -53,6 +54,7 @@ export default function App() {
                             <Route path="/user-dashboard" element={<UserDashboard />} />
                             <Route path="/expert-dashboard/:expertProfileId" element={<ExpertDashboard />} />
                             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                            <Route path="/chats" element={<ChatPage />} />
                         </Route>
 
                     </Route>

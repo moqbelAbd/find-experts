@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link ,useParams} from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { MessageSquare } from 'lucide-react';
 import axiosClient  from '/src/api/axiosClient.js'
 import "./user-profile.css"
 import {getUserIdFromToken} from "../../utils/authUtils.js";
@@ -15,6 +16,7 @@ export default function UserProfile() {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const navigate = useNavigate();
     const {userId} = useParams();
     const currentUserId = getUserIdFromToken();
     const isOwner = userId === currentUserId;
@@ -118,6 +120,17 @@ export default function UserProfile() {
 
     const initials = profile.fullName ? profile.fullName.substring(0, 2).toUpperCase() : 'U';
 
+    const handleStartChat = () => {
+        navigate('/chats', {
+            state: {
+                targetUser: {
+                    partnerId: userId,
+                    partnerName: profile.fullName,
+                    partnerAvatar: profile.avatar
+                }
+            }
+        });
+    };
     return (
         <div className="container">
             <div className="profile-page-wrapper">
@@ -126,17 +139,27 @@ export default function UserProfile() {
                     <h1 className="section-title" style={{ marginBottom: 0 }}>
                         {isOwner ? 'My Profile' :  'User Profile' }
                 </h1>
-                    {profile.expertProfileId ? (
-                        <Link to={`/expert/${profile.expertProfileId}`} className="btn primary-btn">
-                            View Expert Profile
-                        </Link>
-                    ) : isOwner && (
-                        <Link to="/become-expert" className="btn outline-btn">
-                            Go Expert
-                        </Link>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: 'auto' }}>
+                        {profile.expertProfileId ? (
+                            <Link to={`/expert/${profile.expertProfileId}`} className="btn primary-btn">
+                                View Expert Profile
+                            </Link>
+                        ) : isOwner && (
+                            <Link to="/become-expert" className="btn outline-btn">
+                                Go Expert
+                            </Link>
+                        )}
 
-
+                        {!isOwner && (
+                            <button
+                                className="btn primary-btn"
+                                onClick={handleStartChat}
+                            >
+                                <MessageSquare size={18} />
+                                Chat
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="profile-content">

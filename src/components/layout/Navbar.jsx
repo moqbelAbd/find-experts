@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, Menu, X } from 'lucide-react';
+import { Bell, MessageSquare, Menu, X } from 'lucide-react';
 import ProfileDropdown from './ProfileDropdown';
 import './navbar.css';
 import logo from "../../assets/Logo/platform logo.png";
@@ -100,7 +100,9 @@ export default function Navbar() {
                                 <Bell size={20} />
                                 <span className="notification-badge">2</span>
                             </div>
-
+                            <Link to="/chats" >
+                                <MessageSquare size={20} />
+                            </Link>
                             <div className="logout-container">
                                 <button
                                     onClick={() => logout() }
