@@ -19,12 +19,14 @@ import PostPage from "./pages/PostsPage/PostPage.jsx";
 import BookingPage from "./pages/Book/BookingPage.jsx";
 import UserDashboard from "./pages/Dashboard/UserDashboard.jsx";
 import ExpertDashboard from "./pages/Dashboard/ExpertDashboard.jsx";
+import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard.jsx";
 
 export default function App() {
     return (
+        <BrowserRouter>
         <AuthProvider>
             <Toaster position="top-right" />
-            <BrowserRouter>
+
                 <Routes>
                     {/* Auth pages */}
                     <Route path="/login" element={<Login />} />
@@ -49,14 +51,16 @@ export default function App() {
                             <Route path="/create-post" element={<CreatePost />} />
                             <Route path="/book/:expertId" element={<BookingPage />} />
                             <Route path="/user-dashboard" element={<UserDashboard />} />
-                                <Route path="/expert-dashboard/:expertProfileId" element={<ExpertDashboard />} />
+                            <Route path="/expert-dashboard/:expertProfileId" element={<ExpertDashboard />} />
+                            <Route path="/admin-dashboard" element={<AdminDashboard />} />
                         </Route>
 
                     </Route>
 
                     <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
-            </BrowserRouter>
         </AuthProvider>
+     </BrowserRouter>
+
     );
 }
