@@ -150,7 +150,7 @@ namespace FindExpertsBackend.Controllers
 
 
         [HttpGet("admin/overview")]
-        [Authorize(Roles = "Admin")] // Ensure only admins can hit this
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAdminOverview()
         {
             var now = DateTime.UtcNow;
@@ -158,30 +158,38 @@ namespace FindExpertsBackend.Controllers
             var startOfLastMonth = startOfCurrentMonth.AddMonths(-1);
             var startOfYear = new DateTime(now.Year, 1, 1);
 
-            // 1. Fetch Base Data
             var users = await _context.Users.AsNoTracking().ToListAsync();
             var experts = await _context.ExpertProfiles.AsNoTracking().Include(e => e.Guarantees).ToListAsync();
             var bookings = await _context.Bookings.AsNoTracking().ToListAsync();
-            var posts = await _context.Posts.AsNoTracking().ToListAsync(); // Assuming a Posts table exists
+            var posts = await _context.Posts.AsNoTracking().ToListAsync();
 
-            // Helper function to calculate growth %
             double CalcGrowth(double current, double previous)
             {
                 if (previous == 0) return current > 0 ? 100 : 0;
                 return Math.Round(((current - previous) / previous) * 100, 1);
             }
 
-            // 2. Calculate Stats & Growth
+            // Calculate Users
             var currentUsers = users.Count(u => u.CreatedAt >= startOfCurrentMonth);
             var prevUsers = users.Count(u => u.CreatedAt >= startOfLastMonth && u.CreatedAt < startOfCurrentMonth);
 
+            // Calculate Bookings
             var currentBookings = bookings.Count(b => b.CreatedAt >= startOfCurrentMonth);
             var prevBookings = bookings.Count(b => b.CreatedAt >= startOfLastMonth && b.CreatedAt < startOfCurrentMonth);
 
+            // Calculate Revenue
             var currentRevenue = bookings.Where(b => b.CreatedAt >= startOfCurrentMonth && b.BookingStatus == BookingStatusEnum.Completed).Sum(b => (double)b.BookingPrice);
             var prevRevenue = bookings.Where(b => b.CreatedAt >= startOfLastMonth && b.CreatedAt < startOfCurrentMonth && b.BookingStatus == BookingStatusEnum.Completed).Sum(b => (double)b.BookingPrice);
 
-            // 3. Monthly Bookings Chart Data (Jan - Current Month)
+            // Calculate Experts 
+            var currentExperts = experts.Count(e => e.CreatedAt >= startOfCurrentMonth);
+            var prevExperts = experts.Count(e => e.CreatedAt >= startOfLastMonth && e.CreatedAt < startOfCurrentMonth);
+
+            // Calculate Posts 
+            var openPosts = posts.Where(p => p.PostStatus == PostStatusEnum.Open).ToList();
+            var currentPosts = openPosts.Count(p => p.CreatedAt >= startOfCurrentMonth);
+            var prevPosts = openPosts.Count(p => p.CreatedAt >= startOfLastMonth && p.CreatedAt < startOfCurrentMonth);
+
             var monthlyBookings = bookings
                 .Where(b => b.CreatedAt >= startOfYear)
                 .GroupBy(b => b.CreatedAt.Month)
@@ -197,19 +205,19 @@ namespace FindExpertsBackend.Controllers
             var guaranteeStats = new GuaranteeStatsDto
             {
                 TotalGuarantees = experts.Count(e => e.Guarantees.Count >= 1),
-                GreenCount = experts.Count(e => e.Guarantees.Count >= 3 && e.Guarantees.Count < 5),
-                BronzeCount = experts.Count(e => e.Guarantees.Count >= 5 && e.Guarantees.Count < 10),
-                SilverCount = experts.Count(e => e.Guarantees.Count >= 10 && e.Guarantees.Count < 15),
-                GoldCount = experts.Count(e => e.Guarantees.Count >= 15)
+                GreenCount = experts.Count(e => e.Guarantees.Count >= 1 && e.Guarantees.Count < 3), // Starts at 1
+                BronzeCount = experts.Count(e => e.Guarantees.Count >= 3 && e.Guarantees.Count < 6),
+                SilverCount = experts.Count(e => e.Guarantees.Count >= 6 && e.Guarantees.Count < 10),
+                GoldCount = experts.Count(e => e.Guarantees.Count >= 10)
             };
 
             var response = new AdminOverviewDto
             {
                 TotalUsers = new StatCardDto { Value = users.Count, GrowthPercentage = CalcGrowth(currentUsers, prevUsers) },
-                ActiveExperts = new StatCardDto { Value = experts.Count, GrowthPercentage = 0 }, // Replace with actual expert growth logic
+                ActiveExperts = new StatCardDto { Value = experts.Count, GrowthPercentage = CalcGrowth(currentExperts, prevExperts) }, 
                 TotalBookings = new StatCardDto { Value = bookings.Count, GrowthPercentage = CalcGrowth(currentBookings, prevBookings) },
                 TotalRevenue = new StatCardDto { Value = (decimal)bookings.Where(b => b.BookingStatus == BookingStatusEnum.Completed).Sum(b => b.BookingPrice), GrowthPercentage = CalcGrowth(currentRevenue, prevRevenue) },
-                OpenPosts = new StatCardDto { Value = posts.Count(p => p.PostStatus == PostStatusEnum.Open), GrowthPercentage = 0 },
+                OpenPosts = new StatCardDto { Value = openPosts.Count, GrowthPercentage = CalcGrowth(currentPosts, prevPosts) }, 
                 MonthlyBookings = monthlyBookings,
                 ExpertGuarantees = guaranteeStats
             };

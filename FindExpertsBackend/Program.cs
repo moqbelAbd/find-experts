@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //  Add ASP.NET Core Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid> >(options =>
+//builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
