@@ -7,14 +7,28 @@ import logo from "../../assets/Logo/platform logo.png";
 
 import React, { useState } from "react";
 import {getUserIdFromToken} from "../../utils/authUtils.js";
+import {jwtDecode} from "jwt-decode";
 
 export default function Navbar() {
     const { user, token, logout } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+    let isAdmin = false;
+    if (token) {
+        try {
+            const decodedToken = jwtDecode(token);
+            const roleClaimKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+            const userRoles = decodedToken[roleClaimKey] || decodedToken.role || [];
+            isAdmin = Array.isArray(userRoles) ? userRoles.includes('Admin') : userRoles === 'Admin';
+        } catch (error) {
+            console.error("Failed to decode token", error);
+        }
+    }
+
     const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
     const closeMenu = () => setMobileMenuOpen(false);
-    const userId = getUserIdFromToken();
+
+    const userId = token ? getUserIdFromToken() : null;
 
     return (
         <nav className="navbar-container">
@@ -29,22 +43,41 @@ export default function Navbar() {
 
             <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                 {token ? (
-                    <>
-                        <NavLink to="/user-dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                            Dashboard
-                        </NavLink>
-                        <NavLink to={`/profile/${userId}`} onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                            My Profile
-                        </NavLink>
-                        <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                            Find Experts
-                        </NavLink>
-                        <NavLink to="/posts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                            Posts
-                        </NavLink>
-
-                    </>
+                    isAdmin ? (
+                        /* --- ADMIN LINKS --- */
+                        <>
+                            <NavLink to="/admin-dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                Admin Dashboard
+                            </NavLink>
+                            <NavLink to="/how-it-works" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                How It Works
+                            </NavLink>
+                            <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                Find Experts
+                            </NavLink>
+                            <NavLink to="/posts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                Posts
+                            </NavLink>
+                        </>
+                    ) : (
+                        /* --- NORMAL LOGGED-IN USER LINKS --- */
+                        <>
+                            <NavLink to="/user-dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                Dashboard
+                            </NavLink>
+                            <NavLink to={`/profile/${userId}`} onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                My Profile
+                            </NavLink>
+                            <NavLink to="/find-experts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                Find Experts
+                            </NavLink>
+                            <NavLink to="/posts" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                                Posts
+                            </NavLink>
+                        </>
+                    )
                 ) : (
+                    /* --- GUEST LINKS (Not Logged In) --- */
                     <>
                         <NavLink to="/how-it-works" onClick={closeMenu} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                             How It Works

@@ -10,6 +10,14 @@ export default function UserDashboard() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('all'); // Changed default tab to 'all'
 
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedBookingForReview, setSelectedBookingForReview] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [reviewComment, setReviewComment] = useState('');
+    const [giveGuarantee, setGiveGuarantee] = useState(false);
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
     // Extracted fetch function so we can refresh after cancelling
     const fetchDashboard = async () => {
         try {
@@ -123,6 +131,46 @@ export default function UserDashboard() {
         const oneHourInMs = 60 * 60 * 1000;
 
         return now >= (meetingTime - oneHourInMs);
+    };
+
+    const openReviewModal = (booking) => {
+        setSelectedBookingForReview(booking);
+        setRating(0);
+        setReviewComment('');
+        setGiveGuarantee(false);
+        setReviewModalOpen(true);
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        if (!selectedBookingForReview) return;
+
+        if (rating === 0) {
+            toast.error("Please select a star rating before submitting.");
+            return;
+        }
+
+        setIsSubmittingReview(true);
+        const toastId = toast.loading("Submitting review...");
+
+        try {
+            await axiosClient.post('/Book/Review', {
+                expertId: selectedBookingForReview.consultantId,
+                bookingId: selectedBookingForReview.bookingId,
+                rating: rating,
+                reviewComment: reviewComment,
+                isGuaranteed: giveGuarantee
+            });
+
+            toast.success("Review submitted successfully!", { id: toastId });
+            setReviewModalOpen(false);
+            fetchDashboard();
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.message || "Failed to submit review", { id: toastId });
+        } finally {
+            setIsSubmittingReview(false);
+        }
     };
 
     return (
@@ -265,7 +313,7 @@ export default function UserDashboard() {
                                             </div>
 
                                             {/* Meeting Box (Only show if Accepted and has a link) */}
-                                            {booking.meetingLink && isAccepted && (
+                                            {booking.meetingLink && isAccepted && statusStr !== 'completed' && statusStr !== '4' && (
                                                 <div className="dash-meeting-box">
                                                     <div className="dash-meeting-info">
                                                         <Video size={24} className="dash-meeting-icon" />
@@ -297,6 +345,27 @@ export default function UserDashboard() {
                                                 </div>
                                             )}
 
+                                            {/* If booking is completed, show Review Button instead of Join */}
+                                            {(statusStr === 'completed' || statusStr === '4') && (
+                                                <div className="dash-item-footer" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+                                                    {booking.hasReviewed ? (
+                                                        <span style={{
+                                                            color: '#64748b', fontSize: '0.9rem', fontWeight: '500',  display: 'flex',  alignItems: 'center', gap: '6px', padding: '8px 16px'
+                                                        }}>
+                                                            ⭐ Reviewed
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            className="btn primary-btn"
+                                                            onClick={() => openReviewModal(booking)}
+                                                            style={{ backgroundColor: '#52796f', borderColor: '#52796f' }}
+                                                        >
+                                                            ⭐ Add Review
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )}
+
                                             {/* Cancel Action (Only show for pending bookings) */}
                                             {isPending && (
                                                 <div className="dash-item-footer">
@@ -320,8 +389,97 @@ export default function UserDashboard() {
                             </div>
                         )}
                     </div>
+
                 </div>
             </div>
+            {/* --- Review Modal --- */}
+            {reviewModalOpen && selectedBookingForReview && (
+                <div className="modal-backdrop">
+                    <div className="modal-content-card">
+
+                        {/* Consultant Summary Card */}
+                        <div className="modal-consultant-summary">
+                            <img
+                                src={selectedBookingForReview.consultantAvatar || `https://ui-avatars.com/api/?name=${selectedBookingForReview.consultantName}`}
+                                alt={selectedBookingForReview.consultantName}
+                                className="modal-consultant-avatar"
+                            />
+                            <div>
+                                <h4 className="modal-consultant-name">{selectedBookingForReview.consultantName}</h4>
+                                <p className="modal-consultant-title">{selectedBookingForReview.consultantJobTitle}</p>
+                                <p className="modal-consultant-meta">{formatDateTime(selectedBookingForReview.bookingTime)} • {selectedBookingForReview.bookingDuration} min</p>
+                            </div>
+                        </div>
+
+                        <h3 className="modal-title">How was your session?</h3>
+
+                        <form onSubmit={handleReviewSubmit}>
+                            {/* 5-Star Interactive Rating */}
+                            <div className="star-rating-group">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        type="button"
+                                        key={star}
+                                        onClick={() => setRating(star)}
+                                        onMouseEnter={() => setHoverRating(star)}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                        className={`star-btn ${star <= (hoverRating || rating) ? 'active' : ''}`}
+                                    >
+                                        ★
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Comment Box */}
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Your review (optional)
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    value={reviewComment}
+                                    onChange={(e) => setReviewComment(e.target.value)}
+                                    placeholder="Share what made this session valuable — or what could have been better."
+                                    className="form-control review-textarea"
+                                />
+                            </div>
+
+                            {/* Guarantee Checkbox Card */}
+                            <div className="guarantee-card">
+                                <input
+                                    type="checkbox"
+                                    id="guaranteeCheck"
+                                    checked={giveGuarantee}
+                                    onChange={(e) => setGiveGuarantee(e.target.checked)}
+                                    className="guarantee-checkbox"
+                                />
+                                <label htmlFor="guaranteeCheck" className="guarantee-label-group">
+                                    <span className="guarantee-title">Give a Client Guarantee</span>
+                                    <span className="guarantee-desc">A Guarantee means you personally vouch for this expert. It contributes toward their expert badge.</span>
+                                </label>
+                            </div>
+
+                            {/* Modal Buttons */}
+                            <div className="modal-actions-group">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmittingReview}
+                                    className="btn primary-btn submit-review-btn"
+                                >
+                                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setReviewModalOpen(false)}
+                                    className="btn secondary-btn cancel-review-btn"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
