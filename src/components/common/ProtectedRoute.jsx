@@ -8,6 +8,9 @@ export default function ProtectedRoute({ children }) {
         return <div style={{ padding: '40px', textAlign: 'center' }}>Loading application...</div>;
     }
 
+    if (!token) {
 
+        return <Navigate to="/login" replace />;
+    }
 
     return <Outlet />;}
