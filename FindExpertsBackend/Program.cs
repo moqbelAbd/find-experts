@@ -1,6 +1,7 @@
 using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
+using FindExpertsBackend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -81,7 +82,6 @@ builder.Services.AddControllers()
 
             return new BadRequestObjectResult(response);
         };
-
     }); 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -127,7 +127,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.UseStaticFiles();
 app.UseAuthorization();
-app.UseAuthorization();
+app.UseMiddleware<BannedUserMiddleware>(); 
 app.MapControllers();
 
 app.Run();

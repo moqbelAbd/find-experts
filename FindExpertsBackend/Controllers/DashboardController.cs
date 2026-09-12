@@ -73,7 +73,8 @@ namespace FindExpertsBackend.Controllers
                     ConsultantId = b.ExpertId,
                     ConsultantJobTitle = b.Expert.JobTitle,
                     ConsultantName = b.Expert.User.FullName,
-                    ConsultantAvatar = b.Expert.User.Avatar
+                    ConsultantAvatar = b.Expert.User.Avatar,
+                    HasReviewed = _context.Reviews.Any(r => r.BookingId == b.BookingId)
                 }).ToList()
 
             };

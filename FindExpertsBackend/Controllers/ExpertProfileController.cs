@@ -3,6 +3,7 @@ using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
 using FindExpertsBackend.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -17,12 +18,15 @@ namespace FindExpertsBackend.Controllers
     public class ExpertProfileController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly IWebHostEnvironment _environment;
 
-        public ExpertProfileController(ApplicationDbContext context, IWebHostEnvironment environment)
+        public ExpertProfileController(ApplicationDbContext context, IWebHostEnvironment environment , UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _environment = environment;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -93,7 +97,7 @@ namespace FindExpertsBackend.Controllers
 
             //var response = new List<ExpertsProfilesResponseDto>();
 
-            var profiles = await query.ToListAsync();
+            var profiles = await query.Where(p => p.User.UserStatus != UserStatusEnum.Banned).ToListAsync();
 
 
                var response = profiles.Select(item => new ExpertsProfilesResponseDto
@@ -209,7 +213,7 @@ namespace FindExpertsBackend.Controllers
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
 
-            var user = await _context.Users.FindAsync(userIdStr);
+            var user = await _context.Users.FindAsync(userId);
 
             if(user == null || user.UserStatus != UserStatusEnum.Active)
             {
@@ -262,6 +266,7 @@ namespace FindExpertsBackend.Controllers
 
                 _context.ExpertProfiles.Add(expertProfile);
                 await _context.SaveChangesAsync(); // Save to generate the ExpertProfileId
+                await _userManager.AddToRoleAsync(user, "Expert"); //give the user an expert role
 
                 // 3. Process Skills (Find existing or create new ones)
                 foreach (var skillName in dto.Skills.Distinct())

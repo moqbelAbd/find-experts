@@ -28,7 +28,7 @@ namespace FindExpertsBackend.Models
         public string PostDescription { get; set; }
 
         [Required]
-        public int FieldId { get; set; }
+        public int? FieldId { get; set; }
 
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -41,7 +41,9 @@ namespace FindExpertsBackend.Models
 
         [ForeignKey(nameof(FieldId))]
         public virtual Field Field { get; set; }
+        public bool? RestrictToFieldExperts { get; set; } = false;
 
+        public string? AttachedPhotoUrl { get; set; }
         public virtual ServicePost ServicePost { get; set; }
         public virtual JobPost JobPost { get; set; }
 

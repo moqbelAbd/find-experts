@@ -235,5 +235,69 @@ namespace FindExpertsBackend.Controllers
             return Ok(ApiResponse<string>.SuccessResult("Booking status updated successfully."));
         }
 
+
+        [HttpPost("review")]
+        public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto dto)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdStr, out Guid reviewerId))
+            {
+                return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
+            }
+
+            // 1. Verify the booking exists and belongs to the current user
+            var booking = await _context.Bookings
+                .FirstOrDefaultAsync(b => b.BookingId == dto.BookingId);
+
+            if (booking == null)
+            {
+                return NotFound(ApiResponse<string>.FailureResult("Booking not found."));
+            }
+
+            // 2. Ensure a review for this booking doesn't already exist
+            var existingReview = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.BookingId == dto.BookingId);
+
+            if (existingReview != null)
+            {
+                return BadRequest(ApiResponse<string>.FailureResult("You have already reviewed this booking."));
+            }
+
+            // 3. Create and add the Review record
+            var review = new Review
+            {
+                ReviewerId = reviewerId,
+                ExpertId = dto.ExpertId,
+                BookingId = dto.BookingId,
+                Rating = dto.Rating,
+                ReviewComment = dto.ReviewComment,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Reviews.Add(review);
+
+            // 4. Handle Guarantee checkbox logic if selected
+            if (dto.IsGuaranteed)
+            {
+                // Check if a guarantee already exists between this client and expert to prevent duplicates
+                var existingGuarantee = await _context.Guarantees
+                    .FirstOrDefaultAsync(g => g.ClientId == reviewerId && g.ExpertId == dto.ExpertId);
+
+                if (existingGuarantee == null)
+                {
+                    var guarantee = new Guarantee
+                    {
+                        ClientId = reviewerId,
+                        ExpertId = dto.ExpertId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.Guarantees.Add(guarantee);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResponse<string>.SuccessResult("Review submitted successfully!"));
+        }
     }
 }

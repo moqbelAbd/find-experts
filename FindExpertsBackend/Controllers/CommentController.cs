@@ -52,7 +52,7 @@ namespace FindExpertsBackend.Controllers
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid token"));
-
+            
             var post = await _context.Posts.FindAsync(dto.PostId);
             if(post != null && post.PostStatus != PostStatusEnum.Open)
                 return BadRequest(ApiResponse<string>.FailureResult("Currently the post isn't opend for comments"));

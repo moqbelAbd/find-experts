@@ -1,6 +1,7 @@
 ﻿using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
+using FindExpertsBackend.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,14 @@ namespace FindExpertsBackend.Controllers
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 return Unauthorized(ApiResponse<AuthResponseDto>.FailureResult("Invalid email or password."));
+            }
+
+            var userC = await _context.Users.FindAsync(user.Id);
+            // 3. Check if they are banned
+            if (userC != null && userC.UserStatus == UserStatusEnum.Banned)
+            {
+                return StatusCode(StatusCodes.Status423Locked,
+                    ApiResponse<string>.FailureResult("Your account has been suspended by an administrator."));
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);

@@ -45,12 +45,18 @@ namespace FindExpertsBackend.Controllers
                     .Include(u => u.ExpertProfile)
                     .FirstOrDefaultAsync(u => u.Id == userId);
             }
-
-
-            var query = _context.Posts
+            int? userFieldId = null;
+            if (user != null)
+            {
+                userFieldId = user.ExpertProfile?.FieldId;
+            
+            }
+           var query = _context.Posts
+                        .Where(p => p.RestrictToFieldExperts == false || p.AuthorId == userId ||
+                        (p.RestrictToFieldExperts == false &&  userFieldId != null && p.FieldId == userFieldId) )
                          .AsQueryable();
 
-
+            
             // Apply Filters dynamically based on query parameters
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -107,6 +113,7 @@ namespace FindExpertsBackend.Controllers
                 PostId = p.PostId,
                 Type = p.PostType,
                 postTitle = p.PostTitle,
+                AttachedPhoto = p.AttachedPhotoUrl,
                 PostContent = p.PostDescription,
                 CommentsCount = p.Comments.Count,
                 postDeadLine =p.PostDeadLine,
@@ -147,6 +154,7 @@ namespace FindExpertsBackend.Controllers
                     PostId = p.PostId,
                     Type = p.PostType,
                     postTitle = p.PostTitle,
+                    AttachedPhoto = p.AttachedPhotoUrl,
                     PostContent = p.PostDescription,
                     CommentsCount = p.Comments.Count,
                     postDeadLine = p.PostDeadLine,
@@ -173,7 +181,7 @@ namespace FindExpertsBackend.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost([FromBody] CreatePostDto dto) {
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto) {
 
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if(!Guid.TryParse(userIdStr, out Guid userId))
@@ -289,13 +297,15 @@ namespace FindExpertsBackend.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdatePost([FromBody] UpdatePostDto dto)
+        public async Task<IActionResult> UpdatePost([FromForm] UpdatePostDto dto)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token."));
 
+
             var post = await _context.Posts
+                .Include(p => p.Author)
                 .Include(p => p.ServicePost)
                 .Include(p => p.JobPost)
                 .Include(p => p.PostTags)
@@ -304,6 +314,11 @@ namespace FindExpertsBackend.Controllers
             {
                 return NotFound(ApiResponse<string>.FailureResult("Post not found."));
             }
+            if (post.Author == null || post.Author.UserStatus != UserStatusEnum.Active)
+            {
+                return BadRequest(ApiResponse<string>.FailureResult("Your account is not active or does not exist"));
+            }
+
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 

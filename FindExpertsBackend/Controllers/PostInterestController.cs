@@ -29,7 +29,10 @@ namespace FindExpertsBackend.Controllers
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid token"));
 
             // Get the user's Expert Profile
-            var expert = await _context.ExpertProfiles.FirstOrDefaultAsync(e => e.UserId == userId);
+            var expert = await _context.ExpertProfiles.Include(e => e.User).FirstOrDefaultAsync(e => e.UserId == userId);
+
+            if (expert.User.UserStatus != Models.Enums.UserStatusEnum.Active)
+                return Unauthorized(ApiResponse<string>.FailureResult("Your Account is Inactive or Banned"));
 
             if (expert == null)
                 return BadRequest(ApiResponse<string>.FailureResult("You must complete your Expert Profile to apply."));

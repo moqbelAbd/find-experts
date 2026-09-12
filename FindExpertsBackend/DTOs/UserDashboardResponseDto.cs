@@ -29,6 +29,7 @@ namespace FindExpertsBackend.DTOs
         public string ConsultantName { get; set; }
         public string ConsultantAvatar { get; set; }
         public string ConsultantJobTitle { get; set; }
+        public bool HasReviewed { get; set; }
 
     }
 }

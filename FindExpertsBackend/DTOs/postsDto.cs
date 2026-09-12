@@ -14,6 +14,7 @@ namespace FindExpertsBackend.DTOs
         public DateTime postDeadLine { get; set; } = DateTime.UtcNow;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public string? AttachedPhoto { get; set; }
         public PostStatusEnum PostStatus { get; set; }
         public Guid AuthorId { get; set; }
         public string AuthorName { get; set; }

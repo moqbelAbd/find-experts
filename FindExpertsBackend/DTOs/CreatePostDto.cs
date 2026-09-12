@@ -14,11 +14,12 @@ namespace FindExpertsBackend.DTOs
 
         [Required]
         public string PostDescription { get; set; }
+        public IFormFile? AttachedPhoto { get; set; }
+        public int? FieldId { get; set; }
 
-        [Required]
-        public int FieldId { get; set; }
+        public bool RestrictToFieldExperts { get; set; } = false;
 
-        public List<string> Tags { get; set; }
+        public List<string>? Tags { get; set; }
 
         public int? Budget { get; set; }
 
