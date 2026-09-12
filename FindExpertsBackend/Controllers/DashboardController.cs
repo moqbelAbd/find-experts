@@ -146,5 +146,140 @@ namespace FindExpertsBackend.Controllers
             return Ok(ApiResponse<ExpertDashboardResponseDto>.SuccessResult(response));
         }
 
+
+
+        [HttpGet("admin/overview")]
+        [Authorize(Roles = "Admin")] // Ensure only admins can hit this
+        public async Task<IActionResult> GetAdminOverview()
+        {
+            var now = DateTime.UtcNow;
+            var startOfCurrentMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfLastMonth = startOfCurrentMonth.AddMonths(-1);
+            var startOfYear = new DateTime(now.Year, 1, 1);
+
+            // 1. Fetch Base Data
+            var users = await _context.Users.AsNoTracking().ToListAsync();
+            var experts = await _context.ExpertProfiles.AsNoTracking().Include(e => e.Guarantees).ToListAsync();
+            var bookings = await _context.Bookings.AsNoTracking().ToListAsync();
+            var posts = await _context.Posts.AsNoTracking().ToListAsync(); // Assuming a Posts table exists
+
+            // Helper function to calculate growth %
+            double CalcGrowth(double current, double previous)
+            {
+                if (previous == 0) return current > 0 ? 100 : 0;
+                return Math.Round(((current - previous) / previous) * 100, 1);
+            }
+
+            // 2. Calculate Stats & Growth
+            var currentUsers = users.Count(u => u.CreatedAt >= startOfCurrentMonth);
+            var prevUsers = users.Count(u => u.CreatedAt >= startOfLastMonth && u.CreatedAt < startOfCurrentMonth);
+
+            var currentBookings = bookings.Count(b => b.CreatedAt >= startOfCurrentMonth);
+            var prevBookings = bookings.Count(b => b.CreatedAt >= startOfLastMonth && b.CreatedAt < startOfCurrentMonth);
+
+            var currentRevenue = bookings.Where(b => b.CreatedAt >= startOfCurrentMonth && b.BookingStatus == BookingStatusEnum.Completed).Sum(b => (double)b.BookingPrice);
+            var prevRevenue = bookings.Where(b => b.CreatedAt >= startOfLastMonth && b.CreatedAt < startOfCurrentMonth && b.BookingStatus == BookingStatusEnum.Completed).Sum(b => (double)b.BookingPrice);
+
+            // 3. Monthly Bookings Chart Data (Jan - Current Month)
+            var monthlyBookings = bookings
+                .Where(b => b.CreatedAt >= startOfYear)
+                .GroupBy(b => b.CreatedAt.Month)
+                .Select(g => new MonthlyStatDto
+                {
+                    Month = new DateTime(now.Year, g.Key, 1).ToString("MMM"),
+                    Total = g.Count()
+                })
+                .OrderBy(m => DateTime.ParseExact(m.Month, "MMM", System.Globalization.CultureInfo.InvariantCulture).Month)
+                .ToList();
+
+            // 4. Expert Guarantee Tiers (Donut Chart)
+            var guaranteeStats = new GuaranteeStatsDto
+            {
+                TotalGuarantees = experts.Count(e => e.Guarantees.Count >= 1),
+                GreenCount = experts.Count(e => e.Guarantees.Count >= 3 && e.Guarantees.Count < 5),
+                BronzeCount = experts.Count(e => e.Guarantees.Count >= 5 && e.Guarantees.Count < 10),
+                SilverCount = experts.Count(e => e.Guarantees.Count >= 10 && e.Guarantees.Count < 15),
+                GoldCount = experts.Count(e => e.Guarantees.Count >= 15)
+            };
+
+            var response = new AdminOverviewDto
+            {
+                TotalUsers = new StatCardDto { Value = users.Count, GrowthPercentage = CalcGrowth(currentUsers, prevUsers) },
+                ActiveExperts = new StatCardDto { Value = experts.Count, GrowthPercentage = 0 }, // Replace with actual expert growth logic
+                TotalBookings = new StatCardDto { Value = bookings.Count, GrowthPercentage = CalcGrowth(currentBookings, prevBookings) },
+                TotalRevenue = new StatCardDto { Value = (decimal)bookings.Where(b => b.BookingStatus == BookingStatusEnum.Completed).Sum(b => b.BookingPrice), GrowthPercentage = CalcGrowth(currentRevenue, prevRevenue) },
+                OpenPosts = new StatCardDto { Value = posts.Count(p => p.PostStatus == PostStatusEnum.Open), GrowthPercentage = 0 },
+                MonthlyBookings = monthlyBookings,
+                ExpertGuarantees = guaranteeStats
+            };
+
+            return Ok(ApiResponse<AdminOverviewDto>.SuccessResult(response));
+        }
+
+        [HttpGet("admin/consultations")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAdminConsultations()
+        {
+            var bookings = await _context.Bookings
+                .AsNoTracking()
+                .Include(b => b.User)
+                .Include(b => b.Expert)
+                    .ThenInclude(e => e.User)
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+
+            var total = bookings.Count;
+
+            var response = new AdminConsultationsDto
+            {
+                TotalBookings = total,
+                Completed = bookings.Count(b => b.BookingStatus == BookingStatusEnum.Completed),
+                Pending = bookings.Count(b => b.BookingStatus == BookingStatusEnum.Pending),
+                Accepted = bookings.Count(b => b.BookingStatus == BookingStatusEnum.Accepted),
+                Cancelled = bookings.Count(b => b.BookingStatus == BookingStatusEnum.Cancelled),
+                Rejected = bookings.Count(b => b.BookingStatus == BookingStatusEnum.Rejected),
+
+                Bookings = bookings.Select(b => new AdminBookingItemDto
+                {
+                    BookingId = b.BookingId,
+                    ClientName = b.User.FullName ?? b.User.UserName,
+                    ClientId = b.UserId,
+                    ExpertName = b.Expert.User.FullName ?? b.Expert.User.UserName,
+                    ExpertId = b.ExpertId,
+                    BookingTime = b.BookingStartTime,
+                    BookingDuration = b.BookingDuration,
+                    BookingPrice = b.BookingPrice,
+                    BookingStatus = b.BookingStatus
+                }).ToList()
+            };
+
+            return Ok(ApiResponse<AdminConsultationsDto>.SuccessResult(response));
+        }
+
+        [HttpGet("admin/users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAdminUsers()
+        {
+            var users = await _context.Users
+                .AsNoTracking()
+                .Include(u => u.ExpertProfile)
+                .OrderByDescending(u => u.CreatedAt)
+                .Select(u => new AdminUsersItemDto
+                {
+                    UserId = u.Id,
+                    FullName = u.FullName ?? u.UserName,
+                    Email = u.Email,
+                    Location = u.UserLocation, 
+                    Avatar = u.Avatar,
+                    Role = u.ExpertProfile != null ? "Expert" : "User",
+                    JoinedAt = u.CreatedAt,
+                    Status = u.UserStatus.ToString()
+                })
+                .ToListAsync();
+
+            return Ok(ApiResponse<List<AdminUsersItemDto>>.SuccessResult(users));
+        }
+
+
     }
 }

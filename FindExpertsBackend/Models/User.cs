@@ -13,11 +13,12 @@ namespace FindExpertsBackend.Models
         [MaxLength(255)]
         public string UserLocation { get; set; }
 
-        public UserStatusEnum UserStatus { get; set; } = UserStatusEnum.Pending;
+        public UserStatusEnum UserStatus { get; set; } = UserStatusEnum.Active;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation Properties
- 
+
 
         public virtual ExpertProfile ExpertProfile { get; set; }
 
