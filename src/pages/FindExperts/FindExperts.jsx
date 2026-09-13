@@ -202,8 +202,10 @@ export default function FindExperts() {
 
                                     <div className="card-header">
                                         <div className="profile-img-container">
-                                            <img src={expert.profilePicture || '/default-avatar.png'} alt={expert.fullName} />
-                                            <span className="status-dot"></span>
+                                            <img
+                                                src={expert.profilePicture || `https://ui-avatars.com/api/?name=${expert.fullName}&background=F1FAF6&color=12372A`}
+                                                alt={expert.fullName}
+                                            />                                            <span className="status-dot"></span>
                                         </div>
                                         <div className="header-info">
                                             <h3 className="expert-name">{expert.fullName}</h3>

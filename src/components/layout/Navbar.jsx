@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Bell, MessageSquare, Menu, X } from 'lucide-react';
+import NotificationBell from "./NotificationBell.jsx";
 import ProfileDropdown from './ProfileDropdown';
 import './navbar.css';
 import logo from "../../assets/Logo/platform logo.png";
@@ -96,10 +97,8 @@ export default function Navbar() {
                 <div className="nav-actions">
                     {token ? (
                         <>
-                            <div className="notification-bell">
-                                <Bell size={20} />
-                                <span className="notification-badge">2</span>
-                            </div>
+                            <NotificationBell />
+
                             <Link to="/chats" >
                                 <MessageSquare size={20} />
                             </Link>
