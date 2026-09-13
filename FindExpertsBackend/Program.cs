@@ -1,6 +1,7 @@
 using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
+using FindExpertsBackend.Services;
 using FindExpertsBackend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -87,6 +88,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 

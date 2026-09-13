@@ -27,7 +27,6 @@ namespace FindExpertsBackend.Models
         [Required]
         public string PostDescription { get; set; }
 
-        [Required]
         public int? FieldId { get; set; }
 
 

@@ -41,9 +41,15 @@ namespace FindExpertsBackend.Controllers
             var alreadyApplied = await _context.PostInterests
                 .AnyAsync(pi => pi.PostId == postId && pi.ExpertId == expert.ExpertProfileId);
 
-            var post = await _context.Posts.FindAsync(postId);
+            var post = await _context.Posts.Include(p => p.Field).FirstOrDefaultAsync(p => p.PostId == postId);
+
             if (post != null && (post.PostDeadLine <= DateTime.UtcNow || post.PostStatus != Models.Enums.PostStatusEnum.Open ))
                 return BadRequest(ApiResponse<string>.FailureResult("Post is closed"));
+
+            if (post.RestrictToFieldExperts == true && post.FieldId != null && (expert == null || expert.FieldId != post.FieldId))
+            {
+                return BadRequest(ApiResponse<string>.FailureResult($"Post is restrcited for experts of field ${post.Field.FieldName}"));
+            }
 
             if (alreadyApplied)
                 return BadRequest(ApiResponse<string>.FailureResult("You have already expressed interest in this post."));

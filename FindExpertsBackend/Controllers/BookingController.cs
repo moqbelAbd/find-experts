@@ -2,10 +2,11 @@
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
 using FindExpertsBackend.Models.Enums;
+using FindExpertsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 
@@ -16,11 +17,15 @@ namespace FindExpertsBackend.Controllers
     public class BookController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public BookController(ApplicationDbContext context)
+
+        public BookController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
+
 
         [HttpGet("expert/{expertId}/setup")]
         [AllowAnonymous]
@@ -123,8 +128,9 @@ namespace FindExpertsBackend.Controllers
             if (dto.ExpertId == userExpertId)
                 return BadRequest(ApiResponse<string>.FailureResult("You can't book yourself"));
 
-            if (dto.BookingStartTime <= DateTime.UtcNow)
-                return BadRequest(ApiResponse<string>.FailureResult("Booking time must be in the future."));
+            if (dto.BookingStartTime.Date < DateTime.UtcNow.Date)
+                return BadRequest(ApiResponse<string>.FailureResult("Booking date cannot be in the past."));
+
             // 1. Calculate requested timespan
             var requestedStart = dto.BookingStartTime;
             var requestedEnd = requestedStart.AddMinutes(dto.BookingDuration);
@@ -155,6 +161,15 @@ namespace FindExpertsBackend.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
+            var expertUser = await _context.ExpertProfiles.Include(e => e.User).FirstOrDefaultAsync(e => e.ExpertProfileId == dto.ExpertId);
+            var clientUser = await _context.Users.FindAsync(userId); 
+            await _notificationService.CreateNotificationAsync(
+                userId: expertUser.User.Id,
+                type: NotificationTypeEnum.NewMessage,
+                title: "New Message",
+                text: $"You have a new Booking request from {clientUser?.FullName}"
+            );
+
             return Ok(ApiResponse<string>.SuccessResult("Consultation requested successfully."));
         }
 
@@ -169,8 +184,10 @@ namespace FindExpertsBackend.Controllers
 
             // Fetch booking and include the Expert to verify ownership
             var booking = await _context.Bookings
-                .Include(b => b.Expert)
-                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+                    .Include(b => b.Expert)
+                    .ThenInclude(e => e.User) // Include the expert's user info
+                    .Include(b => b.User) // Include the client's user info
+                    .FirstOrDefaultAsync(b => b.BookingId == bookingId);
 
             if (booking == null)
                 return NotFound(ApiResponse<string>.FailureResult("Booking not found."));
@@ -183,6 +200,11 @@ namespace FindExpertsBackend.Controllers
 
             var currentUtc = DateTime.UtcNow;
 
+            Guid notifTargetUserId = Guid.Empty;
+            NotificationTypeEnum notifType = NotificationTypeEnum.NewMessage;
+            string notifTitle = "";
+            string notifText = "";
+
             // --- RULE 1: CLIENT LOGIC ---
             if (isClient)
             {
@@ -194,6 +216,13 @@ namespace FindExpertsBackend.Controllers
 
                 booking.BookingStatus = BookingStatusEnum.Cancelled;
                 booking.UpdatedAt = currentUtc;
+
+                var client = await _context.Users.FindAsync(userId);
+
+                notifTargetUserId = booking.Expert.UserId; 
+                notifType = NotificationTypeEnum.BookingCancelled;
+                notifTitle = "Booking Cancelled";
+                notifText = $"The session with {booking.User.FullName} was cancelled.";
 
             }
 
@@ -208,7 +237,14 @@ namespace FindExpertsBackend.Controllers
 
                     booking.BookingStatus = dto.NewStatus;
                     booking.UpdatedAt = currentUtc;
-                    booking.MeetingUrl = dto.MeetingLink.Trim();
+                    if (dto.NewStatus == BookingStatusEnum.Accepted && !string.IsNullOrEmpty(dto.MeetingLink))
+                        booking.MeetingUrl = dto.MeetingLink.Trim();
+
+                    // Setup Notification for Client
+                    notifTargetUserId = booking.UserId;
+                    notifType = dto.NewStatus == BookingStatusEnum.Accepted ? NotificationTypeEnum.BookingAccepted : NotificationTypeEnum.BookingCancelled;
+                    notifTitle = $"Booking {dto.NewStatus}";
+                    notifText = $"Your booking with {booking.Expert.User.FullName} is now {dto.NewStatus}.";
                 }
                 // Expert Marking as Completed
                 else if (dto.NewStatus == BookingStatusEnum.Completed)
@@ -231,6 +267,18 @@ namespace FindExpertsBackend.Controllers
 
             booking.UpdatedAt = currentUtc;
             await _context.SaveChangesAsync();
+
+            var expert = await _context.Users.FindAsync(userId);
+
+            if (notifTargetUserId != Guid.Empty)
+            {
+                await _notificationService.CreateNotificationAsync(
+                    userId: notifTargetUserId,
+                    type: notifType,
+                    title: notifTitle,
+                    text: notifText
+                );
+            }
 
             return Ok(ApiResponse<string>.SuccessResult("Booking status updated successfully."));
         }

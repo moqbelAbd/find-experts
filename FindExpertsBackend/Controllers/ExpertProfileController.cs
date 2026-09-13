@@ -97,7 +97,7 @@ namespace FindExpertsBackend.Controllers
 
             //var response = new List<ExpertsProfilesResponseDto>();
 
-            var profiles = await query.Where(p => p.User.UserStatus != UserStatusEnum.Banned).ToListAsync();
+            var profiles = await query.Where(p => p.User.UserStatus != UserStatusEnum.Banned).OrderByDescending(p => p.Guarantees.Count).ToListAsync();
 
 
                var response = profiles.Select(item => new ExpertsProfilesResponseDto

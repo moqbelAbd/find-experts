@@ -181,81 +181,78 @@ namespace FindExpertsBackend.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto) {
-
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto)
+        {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(!Guid.TryParse(userIdStr, out Guid userId))
+            if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid user token"));
 
             var user = await _context.Users.FindAsync(userId);
-
             if (user == null || user.UserStatus != UserStatusEnum.Active)
             {
                 return BadRequest(ApiResponse<string>.FailureResult("Your account is not active or does not exist"));
             }
 
-
             using var transaction = await _context.Database.BeginTransactionAsync();
 
-
             PostTypeEnum postType;
-            if(dto.PostTypeId == 1)
-            {
-                postType = PostTypeEnum.Question;
-            }
-            else if (dto.PostTypeId == 2)
-            {
-                postType = PostTypeEnum.Service;
-            }
+            if (dto.PostTypeId == 1) postType = PostTypeEnum.Question;
+            else if (dto.PostTypeId == 2) postType = PostTypeEnum.Service;
+            else if (dto.PostTypeId == 3) postType = PostTypeEnum.Job;
+            else return BadRequest(ApiResponse<string>.FailureResult("Wrong Post Type"));
 
-            else if (dto.PostTypeId == 3)
-            {
-                postType = PostTypeEnum.Job;
-            }
-            else
-            {
-                return BadRequest(ApiResponse<string>.FailureResult("Wrong Post Type"));
-
-            }
             try
             {
+                // --- 1. PHOTO UPLOAD LOGIC ---
+                string photoUrl = null;
+                if (dto.AttachedPhoto != null && dto.AttachedPhoto.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "posts");
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.AttachedPhoto.FileName);
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await dto.AttachedPhoto.CopyToAsync(fileStream);
+                    }
+                    photoUrl = $"/uploads/posts/{uniqueFileName}";
+                }
+
+                // --- 2. CREATE POST OBJECT ---
                 var newPost = new Post
                 {
                     AuthorId = userId,
                     CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow, // FIXED: Prevents DB Constraint Crash
                     PostTitle = dto.PostTitle,
                     PostDescription = dto.PostDescription,
-                    PostDeadLine = dto.PostDeadLine?? DateTime.UtcNow.AddDays(30),
+                    PostDeadLine = dto.PostDeadLine ?? DateTime.UtcNow.AddDays(30),
                     PostType = postType,
                     FieldId = dto.FieldId,
-                    PostStatus = PostStatusEnum.Open
-
+                    PostStatus = PostStatusEnum.Open,
+                    AttachedPhotoUrl = photoUrl,
+                    RestrictToFieldExperts = dto.RestrictToFieldExperts // FIXED: Added missing mapping
                 };
 
-                _context.Posts.Add(newPost);
-                await _context.SaveChangesAsync();
-
-                    foreach(var tag in dto.Tags){
-                    _context.Add(new PostTag
-                    {
-                        PostId = newPost.PostId,
-                        TagName = tag,
-                    });
-                    }
-
-                    if(postType == PostTypeEnum.Service)
-                   {
-                    _context.Add(new ServicePost
-                    {
-                        PostId = newPost.PostId,
-                        ServiceBudget = dto.Budget?? 0
-                    });
+                // --- 3. ATTACH TAGS ---
+                if (dto.Tags != null && dto.Tags.Any())
+                {
+                    newPost.PostTags = dto.Tags.Select(tag => new PostTag { TagName = tag }).ToList();
                 }
 
-
+                // --- 4. ATTACH SPECIFIC POST DETAILS ---
+                if (postType == PostTypeEnum.Service)
+                {
+                    newPost.ServicePost = new ServicePost
+                    {
+                        ServiceBudget = dto.Budget ?? 0
+                    };
+                }
                 else if (postType == PostTypeEnum.Job)
                 {
-
                     WorkLocationTypeEnum workLocation;
                     if (dto.WorkLocationTypeId == 1) workLocation = WorkLocationTypeEnum.OnSite;
                     else if (dto.WorkLocationTypeId == 2) workLocation = WorkLocationTypeEnum.Hybrid;
@@ -269,30 +266,28 @@ namespace FindExpertsBackend.Controllers
                     else if (dto.EmploymentTypeId == 4) employmentType = EmploymentTypeEnum.Freelance;
                     else return BadRequest(ApiResponse<string>.FailureResult("Wrong Job Type"));
 
-                    _context.Add(new JobPost
+                    newPost.JobPost = new JobPost
                     {
-                        PostId = newPost.PostId,
                         Company = dto.Company,
                         ExpectedSalary = dto.ExpectedSalary,
                         JobLocation = dto.JobLocation,
                         WorkLocationType = workLocation,
                         EmploymentType = employmentType
-
-                    });
-
+                    };
                 }
 
+                // --- 5. SAVE EVERYTHING AT ONCE ---
+                _context.Posts.Add(newPost);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, ApiResponse<string>.FailureResult("An error occurred while saving the profile.", new List<string> { ex.Message }));
+                return StatusCode(500, ApiResponse<string>.FailureResult("An error occurred while saving the post.", new List<string> { ex.Message }));
             }
 
             return Ok(ApiResponse<string>.SuccessResult("Creates post successfully"));
-
         }
 
         [HttpPut]
@@ -324,6 +319,24 @@ namespace FindExpertsBackend.Controllers
 
             try
             {
+                if (dto.AttachedPhoto != null && dto.AttachedPhoto.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "posts");
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.AttachedPhoto.FileName);
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await dto.AttachedPhoto.CopyToAsync(fileStream);
+                    }
+
+                    // Optional: Delete the old file from disk here if post.AttachedPhotoUrl is not null
+
+                    post.AttachedPhotoUrl = $"/uploads/posts/{uniqueFileName}";
+                }
                 post.UpdatedAt = DateTime.UtcNow;
                 post.PostTitle = dto.PostTitle;
                 post.PostDescription = dto.PostDescription;

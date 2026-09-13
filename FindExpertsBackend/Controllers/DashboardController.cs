@@ -201,15 +201,15 @@ namespace FindExpertsBackend.Controllers
                 .OrderBy(m => DateTime.ParseExact(m.Month, "MMM", System.Globalization.CultureInfo.InvariantCulture).Month)
                 .ToList();
 
-            // 4. Expert Guarantee Tiers (Donut Chart)
-            var guaranteeStats = new GuaranteeStatsDto
-            {
-                TotalGuarantees = experts.Count(e => e.Guarantees.Count >= 1),
-                GreenCount = experts.Count(e => e.Guarantees.Count >= 1 && e.Guarantees.Count < 3), // Starts at 1
-                BronzeCount = experts.Count(e => e.Guarantees.Count >= 3 && e.Guarantees.Count < 6),
-                SilverCount = experts.Count(e => e.Guarantees.Count >= 6 && e.Guarantees.Count < 10),
-                GoldCount = experts.Count(e => e.Guarantees.Count >= 10)
-            };
+// 4. Expert Guarantee Tiers (Donut Chart)
+var guaranteeStats = new GuaranteeStatsDto
+{
+    TotalGuarantees = experts.Count(e => e.Guarantees.Count >= 1),
+    GreenCount = experts.Count(e => e.Guarantees.Count >= 1 && e.Guarantees.Count < 3), // Starts at 1
+    BronzeCount = experts.Count(e => e.Guarantees.Count >= 3 && e.Guarantees.Count < 6),
+    SilverCount = experts.Count(e => e.Guarantees.Count >= 6 && e.Guarantees.Count < 10),
+    GoldCount = experts.Count(e => e.Guarantees.Count >= 10)
+};
 
             var response = new AdminOverviewDto
             {

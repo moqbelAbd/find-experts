@@ -1,11 +1,13 @@
 ﻿using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
+using FindExpertsBackend.Models.Enums;
+using FindExpertsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 
 namespace FindExpertsBackend.Controllers
@@ -16,10 +18,12 @@ namespace FindExpertsBackend.Controllers
     public class MessageController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public MessageController(ApplicationDbContext context)
+        public MessageController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         [HttpGet("conversations")]
@@ -118,6 +122,15 @@ namespace FindExpertsBackend.Controllers
                 CreatedAt = message.CreatedAt,
                 IsRead = message.IsRead
             };
+            var user = await _context.Users.FindAsync(currentUserId);
+            var SenderName = user?.FullName;
+            await _notificationService.CreateNotificationAsync(
+                userId: message.ReceiverId,
+                type: NotificationTypeEnum.NewMessage,
+                title: "New Message",
+                text: $"You have received a new message from {SenderName}"
+            );
+
 
             return Ok(ApiResponse<MessageDto>.SuccessResult(responseDto, "Message sent successfully"));
         }

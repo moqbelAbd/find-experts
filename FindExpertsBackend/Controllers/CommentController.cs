@@ -1,11 +1,12 @@
 using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
+using FindExpertsBackend.Models.Enums;
+using FindExpertsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using FindExpertsBackend.Models.Enums;
 
 namespace FindExpertsBackend.Controllers
 {
@@ -14,11 +15,14 @@ namespace FindExpertsBackend.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public CommentController(ApplicationDbContext context)
+        public CommentController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
+
 
         [HttpGet("{postId}")]
         [AllowAnonymous]
@@ -52,11 +56,19 @@ namespace FindExpertsBackend.Controllers
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdStr, out Guid userId))
                 return Unauthorized(ApiResponse<string>.FailureResult("Invalid token"));
-            
-            var post = await _context.Posts.FindAsync(dto.PostId);
-            if(post != null && post.PostStatus != PostStatusEnum.Open)
+
+            var user = await _context.Users.Include(u => u.ExpertProfile).FirstOrDefaultAsync(u => u.Id == userId);
+
+            var post = await _context.Posts.Include(p => p.Field).FirstOrDefaultAsync(p => p.PostId == dto.PostId);
+            if (post == null)
+                return NotFound(ApiResponse<string>.FailureResult("Post not found."));
+
+            if (post != null && post.PostStatus != PostStatusEnum.Open)
                 return BadRequest(ApiResponse<string>.FailureResult("Currently the post isn't opend for comments"));
 
+            if (post.RestrictToFieldExperts == true && post.FieldId != null && (user.ExpertProfile == null || user.ExpertProfile.FieldId != post.FieldId)) {
+                return BadRequest(ApiResponse<string>.FailureResult($"Post is restrcited for experts of field {post.Field.FieldName}"));
+            }
             var comment = new Comment 
             {
                 PostId = dto.PostId,
@@ -68,6 +80,18 @@ namespace FindExpertsBackend.Controllers
 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
+
+            if (post.AuthorId != userId)
+            {
+                var commenterName = user?.FullName ?? "a user";
+
+                await _notificationService.CreateNotificationAsync(
+                    userId: post.AuthorId,
+                    type: NotificationTypeEnum.NewComment, // Changed to NewComment
+                    title: "New Comment",
+                    text: $"{commenterName} commented on your post."
+                );
+            }
 
             return Ok(ApiResponse<string>.SuccessResult("Comment added successfully"));
         }

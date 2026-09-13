@@ -14,6 +14,8 @@ namespace FindExpertsBackend.DTOs
 
         [Required]
         public string PostDescription { get; set; }
+        public IFormFile? AttachedPhoto { get; set; }
+
 
         [Required]
         public int FieldId { get; set; }
