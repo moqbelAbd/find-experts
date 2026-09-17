@@ -78,3 +78,7 @@ Request Service / Post Job: Create Post -> Publish -> Experts view and apply -> 
 Become an Expert: User Profile -> "Go Expert" -> Fill Professional Info (Skills/Experience) -> Set Availability -> Profile Created.
 
 Reputation Building: Completed Interaction -> Client leaves Review & Guarantee -> Guarantee Count rises -> Expert earns new Badge.
+
+To Use Admin Account: 
+Email: admin@findexperts.com
+password: Admin@123!
