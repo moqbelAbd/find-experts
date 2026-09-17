@@ -6,17 +6,22 @@ FindExperts connects people needing assistance with skilled professionals. Users
 # ✨ Main Features
 User Profiles: Basic accounts containing name, bio, location, activity, and reviews/guarantees given.
 
-# Expert Profiles: Upgraded accounts showcasing job title, professional field, experience, skills, certificates, portfolio projects, and consultation settings.
+# Expert Profiles:
+Upgraded accounts showcasing job title, professional field, experience, skills, certificates, portfolio projects, and consultation settings.
 
-# Find Experts: Advanced search filtering by field, skills, experience, rating, price, and earned badges.
+# Find Experts:
+Advanced search filtering by field, skills, experience, rating, price, and earned badges.
 
 # Posts:
 
-# Questions: Ask the community for help. Open for comments and discussion.
+# Questions: 
+Ask the community for help. Open for comments and discussion.
 
-# Services: Request a specific task (includes budget and deadline). Experts can respond with "I Can Help" to become candidates.
+# Services:
+Request a specific task (includes budget and deadline). Experts can respond with "I Can Help" to become candidates.
 
-# Jobs: Publish employment opportunities (Full/Part-Time, On-Site/Hybrid/Remote, Salary, Deadline). Experts can apply using "I'm Suitable".
+# Jobs: 
+Publish employment opportunities (Full/Part-Time, On-Site/Hybrid/Remote, Salary, Deadline). Experts can apply using "I'm Suitable".
 
 # Expert Consultations & Booking:
 
@@ -26,21 +31,28 @@ Users book slots, generating statuses: PENDING, ACCEPTED, REJECTED, CANCELLED, C
 
 Uses external meeting links (e.g., Google Meet) provided upon acceptance.
 
-# Messaging: Asynchronous inbox for user-expert communication.
+# Messaging: 
+Asynchronous inbox for user-expert communication.
 
-# Reviews & Ratings: Clients leave a 1-5 star rating and written feedback after a completed interaction.
+# Reviews & Ratings: 
+Clients leave a 1-5 star rating and written feedback after a completed interaction.
 
-# Guarantees & Badges: A trust-based reputation system separate from reviews. Accumulating client guarantees unlocks badges: Green (3), Silver (5), Bronze (10), and Gold (15).
+# Guarantees & Badges:
+A trust-based reputation system separate from reviews. Accumulating client guarantees unlocks badges: Green (3), Silver (5), Bronze (10), and Gold (15).
 
-# Notifications: Alerts for post comments, candidate applications, consultation updates, and new reviews.
+# Notifications:
+Alerts for post comments, candidate applications, consultation updates, and new reviews.
 
 # Dashboards:
 
-# Admin Dashboard: view all users/Expert And change thier status, view all bookings and thier status 
+# Admin Dashboard: 
+view all users/Expert And change thier status, view all bookings and thier status 
 
-# User Dashboard: Track posts, bookings, and saved experts.
+# User Dashboard:
+Track posts, bookings, and saved experts.
 
-# Expert Dashboard: Manage incoming consultation requests, upcoming meetings, applied posts, and profile/availability settings.
+# Expert Dashboard:
+Manage incoming consultation requests, upcoming meetings, applied posts, and profile/availability settings.
 
 # 🔐 Permissions
 Guest: Browse the landing page, search experts, and view public profiles/posts. Cannot interact.
@@ -81,6 +93,6 @@ Become an Expert: User Profile -> "Go Expert" -> Fill Professional Info (Skills/
 
 Reputation Building: Completed Interaction -> Client leaves Review & Guarantee -> Guarantee Count rises -> Expert earns new Badge.
 
-To Use Admin Account: 
+# To Use Admin Account: 
 Email: admin@findexperts.com
 password: Admin@123!
