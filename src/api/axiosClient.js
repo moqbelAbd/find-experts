@@ -22,23 +22,26 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
+        // Extract both response and config from the error object
+        const { response, config } = error;
+
         // 423 Locked: Banned user
-        if (error.response && error.response.status === 423) {
+        if (response && response.status === 423) {
             localStorage.removeItem('token');
-            toast.error(error.response.data.message || "Your account has been suspended.");
+            toast.error(response.data.message || "Your account has been suspended.");
             setTimeout(() => {
                 window.location.href = '/login';
             }, 2500);
         }
         // 401 Unauthorized: Guest trying to access protected resource
-        else if (error.response && error.response.status === 401) {
+        else if (response && response.status === 401) {
             localStorage.removeItem('token');
 
-            // Capture the current page path
-            const currentPath = window.location.pathname + window.location.search;
-
-            // Redirect to login and pass the captured path
-            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            // Only force a redirect if the request was NOT for the login endpoint
+            if (config && !config.url.includes('/login')) {
+                const currentPath = window.location.pathname + window.location.search;
+                window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            }
         }
 
         return Promise.reject(error);
