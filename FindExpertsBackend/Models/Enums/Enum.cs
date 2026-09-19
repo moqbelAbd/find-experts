@@ -61,5 +61,6 @@ namespace FindExpertsBackend.Models.Enums
         BookingAccepted = 3,
         BookingCancelled = 4,
         NewComment = 5,
+        PostInterest = 6
     }
 }

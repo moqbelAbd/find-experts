@@ -1,11 +1,13 @@
 ﻿using FindExpertsBackend.Data;
 using FindExpertsBackend.DTOs;
 using FindExpertsBackend.Models;
+using FindExpertsBackend.Models.Enums;
+using FindExpertsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FindExpertsBackend.Controllers
 {
@@ -14,10 +16,13 @@ namespace FindExpertsBackend.Controllers
     public class PostInterestController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public PostInterestController(ApplicationDbContext context)
+
+        public PostInterestController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         [HttpPost("{postId}")]
@@ -63,6 +68,13 @@ namespace FindExpertsBackend.Controllers
 
             _context.PostInterests.Add(interest);
             await _context.SaveChangesAsync();
+
+            await _notificationService.CreateNotificationAsync(
+                userId: post.AuthorId,
+                type: NotificationTypeEnum.PostInterest,
+                title: "New Interest",
+                text: $"{expert.User.FullName} is interested in your post."
+            );
 
             return Ok(ApiResponse<string>.SuccessResult("Interest registered successfully!"));
         }
