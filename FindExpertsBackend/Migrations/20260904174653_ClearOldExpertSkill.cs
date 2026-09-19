@@ -10,6 +10,7 @@ namespace FindExpertsBackend.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(name: "ExpertSkills");
 
             migrationBuilder.CreateTable(
                     name: "ExpertSkills",
