@@ -137,7 +137,6 @@ export default function PostCard({ post }) {
         }
     };
 
-    const backendBaseUrl = "https://localhost:7252";
     return (
         <div className="post-card">
             <div className="post-card-header">
@@ -207,10 +206,10 @@ export default function PostCard({ post }) {
                     )}
                 </p>
                 {post.attachedPhoto && (
-                    <img
-                    src={post.attachedPhotoUrl ? `${backendBaseUrl}${post.attachedPhotoUrl}` : '/fallback-image.png'}
-                alt="Post Attachment"
-            />
+                    <img className= "post-attachment"
+                        src={`https://localhost:7252${post.attachedPhoto}`}
+                        alt="Post Attachment"
+                    />
                 )}
                 {/* Distinct Job Information Box */}
                 {isJob && (

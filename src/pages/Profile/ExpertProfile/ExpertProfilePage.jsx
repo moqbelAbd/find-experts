@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import axiosClient from "../../../api/axiosClient.js";
 import toast from 'react-hot-toast';
 import {
@@ -248,7 +248,7 @@ export default function ExpertProfilePage() {
                 targetUser: {
                     partnerId: profile.userId,
                     partnerName: profile.fullName,
-                    partnerAvatar: profile.profilePicture
+                    partnerAvatar: profile.profilePicture || `https://ui-avatars.com/api/?name=${expert.fullName}&background=F1FAF6&color=12372A`
                 }
             }
         });
@@ -284,7 +284,7 @@ export default function ExpertProfilePage() {
             <div className="expert-section expert-form-card">
                 <div className="expert-header-layout">
                     <img
-                        src={profile.profilePicture || '/default-avatar.png'}
+                        src={profile.profilePicture || `https://ui-avatars.com/api/?name=${profile.fullName}&background=F1FAF6&color=12372A`}
                         alt={profile.fullName}
                         className="expert-avatar"
                     />
@@ -628,7 +628,8 @@ export default function ExpertProfilePage() {
                                             <>
                                                 <h4>{pkg.duration} Minutes</h4>
                                                 <p className="package-price">${pkg.price}</p>
-                                                <button className="btn primary-btn full-width">Book Session</button>
+                                                <Link to={`/book/${profile.expertProfileId}`} className="btn primary-btn full-width">Book Session</Link>
+
                                             </>
                                         )}
                                     </div>

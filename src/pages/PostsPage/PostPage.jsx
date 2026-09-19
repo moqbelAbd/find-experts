@@ -135,7 +135,7 @@ export default function PostPage() {
         <div key={comment.commentId} className="comment-item" style={{ marginLeft: isReply ? '40px' : '0', marginTop: isReply ? '12px' : '0' }}>
             <Link to={`/profile/${comment.authorId}`}>
                 <img
-                    src={comment.authorAvatar }
+                    src={comment.authorAvatar || `https://ui-avatars.com/api/?name=${comment.authorName}&background=F1FAF6&color=12372A`}
                     alt={comment.authorName}
                     className="comment-avatar"
                     style={{ width: isReply ? '30px' : '40px', height: isReply ? '30px' : '40px' }}
