@@ -20,7 +20,7 @@ namespace FindExpertsBackend.DTOs
         [Required]
         public int FieldId { get; set; }
 
-        public List<string> Tags { get; set; }
+        public List<string>? Tags { get; set; }
 
         public int? Budget { get; set; }
 

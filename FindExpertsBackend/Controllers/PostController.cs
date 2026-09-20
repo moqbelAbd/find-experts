@@ -53,7 +53,7 @@ namespace FindExpertsBackend.Controllers
             }
            var query = _context.Posts
                         .Where(p => p.RestrictToFieldExperts == false || p.AuthorId == userId ||
-                        (p.RestrictToFieldExperts == false &&  userFieldId != null && p.FieldId == userFieldId) )
+                        (p.RestrictToFieldExperts == false &&  userFieldId != null) )
                          .AsQueryable();
 
             
@@ -88,14 +88,19 @@ namespace FindExpertsBackend.Controllers
 
             if (fieldId.HasValue)
             {
-                query = query.Where(p => p.FieldId == fieldId.Value);
+                if (fieldId.Value > 0)
+                {
+                    query = query.Where(p => p.FieldId == fieldId.Value);
+                }
             }
-            else 
+            else
             {
-                if (user != null && user.ExpertProfile != null)
-                    query = query.Where(p => p.FieldId == user.ExpertProfile.FieldId);
-
+                if (userFieldId.HasValue)
+                {
+                    query = query.Where(p => p.FieldId == userFieldId.Value);
+                }
             }
+
 
             // 3. Apply Sorting
             if (sortBy == "recent_activity")
@@ -116,11 +121,12 @@ namespace FindExpertsBackend.Controllers
                 AttachedPhoto = p.AttachedPhotoUrl,
                 PostContent = p.PostDescription,
                 CommentsCount = p.Comments.Count,
-                postDeadLine =p.PostDeadLine,
+                InterestedCount = p.PostInterests.Count,
+                postDeadLine = p.PostDeadLine,
                 CreatedAt = p.CreatedAt,
                 PostStatus = p.PostStatus,
                 FieldId = p.FieldId,
-
+                userField = userFieldId,
                 AuthorId = p.AuthorId,
                 AuthorName = p.Author.FullName, 
                 AuthorAvatar = p.Author.Avatar,
@@ -157,6 +163,7 @@ namespace FindExpertsBackend.Controllers
                     AttachedPhoto = p.AttachedPhotoUrl,
                     PostContent = p.PostDescription,
                     CommentsCount = p.Comments.Count,
+                    InterestedCount = p.PostInterests.Count,
                     postDeadLine = p.PostDeadLine,
                     CreatedAt = p.CreatedAt,
                     PostStatus = p.PostStatus,
@@ -350,7 +357,9 @@ namespace FindExpertsBackend.Controllers
                 var tagsToAdd = incomingTags.Where(nt => !currentTags.Any(t => t.TagName == nt)).ToList();
 
                 _context.RemoveRange(tagsToRemove); // Only delete what was actually removed
-                foreach (var tag in tagsToAdd)
+
+                if (dto.Tags != null && tagsToAdd.Any())
+                    foreach (var tag in tagsToAdd)
                 {
                     post.PostTags.Add(new PostTag { PostId = post.PostId, TagName = tag });
                 }

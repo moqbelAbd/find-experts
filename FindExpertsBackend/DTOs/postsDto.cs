@@ -10,7 +10,9 @@ namespace FindExpertsBackend.DTOs
         public string postTitle { get; set; }
         public string PostContent { get; set; }
         public int CommentsCount { get; set; } = 0;
+        public int InterestedCount { get; set; } = 0;
         public int? FieldId { get; set; }
+        public int? userField { get; set; }
         public DateTime postDeadLine { get; set; } = DateTime.UtcNow;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
