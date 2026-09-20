@@ -1,5 +1,6 @@
 .navbar-container {
-    position: fixed; top: 0; z-index: 1000;
+    position: fixed !important; top: 0; z-index: 1000;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -7,6 +8,7 @@
     background-color: #ffffff;
     border-bottom: 1px solid var(--border);
     height: 72px;
+    margin-bottom: 40px;
 }
 
 .nav-left, .nav-center, .nav-right {

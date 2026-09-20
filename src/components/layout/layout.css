@@ -8,6 +8,7 @@
 
 .site-main {
     flex: 1;
+    padding-top: 60px;
 }
 
 .site-footer {
