@@ -231,7 +231,7 @@ export default function FindExperts() {
                                         </div>
                                     )}
 
-                                    <p className="expert-bio">{expert.bio?.substring(0, 140)}...</p>
+                                    <p className="expert-bio">{expert.bio?.substring(0, 190)}...</p>
 
                                     <div className="skills-tags">
                                         {expert.skills.slice(0, 4).map((skill, i) => (

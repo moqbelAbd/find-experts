@@ -48,14 +48,14 @@ export default function AdminDashboard() {
                 {activeTab === 'overview' && <DashboardOverview />}
 
                 {activeTab === 'consultations' && (
-                    <div className="dash-chart-card text-center" style={{ padding: '60px', color: 'var(--text-muted)' }}>
+                    <div className="dash-chart-card text-center" style={{ color: 'var(--text-muted)' }}>
                         <DashboardConsultationsTab></DashboardConsultationsTab>
                     </div>
                 )}
 
 
                 {activeTab === 'users' && (
-                    <div className="dash-chart-card text-center" style={{ padding: '60px', color: 'var(--text-muted)' }}>
+                    <div className="dash-chart-card text-center" style={{  color: 'var(--text-muted)' }}>
                         <DashboardUsersTab></DashboardUsersTab>
                     </div>
                 )}
