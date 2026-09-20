@@ -11,7 +11,7 @@ export default function AvailabilityCalendar({
                                                  onSelectTime
                                              }) {
 
-    // Generate next 14 days
+    // Generate next month
     const next14Days = useMemo(() => {
         const days = [];
         const today = new Date();

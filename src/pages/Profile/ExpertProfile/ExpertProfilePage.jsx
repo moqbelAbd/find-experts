@@ -248,7 +248,7 @@ export default function ExpertProfilePage() {
                 targetUser: {
                     partnerId: profile.userId,
                     partnerName: profile.fullName,
-                    partnerAvatar: profile.profilePicture || `https://ui-avatars.com/api/?name=${expert.fullName}&background=F1FAF6&color=12372A`
+                    partnerAvatar: profile.profilePicture || `https://ui-avatars.com/api/?name=${profile.fullName}&background=F1FAF6&color=12372A`
                 }
             }
         });

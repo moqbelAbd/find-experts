@@ -42,7 +42,6 @@ export default function App() {
                         <Route path="/posts" element={<PostsPage />} />
                         <Route path="/post/:id" element={<PostPage />} />
                         <Route path="/find-experts" element={<FindExperts />} />
-                        <Route path="/post/edit/:id" element={<EditPostPage />} />                        <Route path="/find-experts" element={<FindExperts />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                         <Route path="/expert/:expertId" element={<ExpertProfilePage />} />
 
@@ -50,6 +49,8 @@ export default function App() {
                         <Route element={<ProtectedRoute />}>
                             <Route path="/become-expert" element={<BecomeExpert />} />
                             <Route path="/create-post" element={<CreatePost />} />
+                            <Route path="/post/edit/:id" element={<EditPostPage />} />
+                            <Route path="/find-experts" element={<FindExperts />} />
                             <Route path="/book/:expertId" element={<BookingPage />} />
                             <Route path="/user-dashboard" element={<UserDashboard />} />
                             <Route path="/expert-dashboard/:expertProfileId" element={<ExpertDashboard />} />
