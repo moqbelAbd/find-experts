@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Link} from 'react-router-dom';
 import { Search, Plus } from 'lucide-react';
 import axiosClient from "../../api/axiosClient.js";
@@ -17,6 +17,9 @@ export default function PostsPage() {
     const [activeTab, setActiveTab] = useState('ALL');
     const [fieldFilter, setFieldFilter] = useState('');
     const [sortBy, setSortBy] = useState('newest');
+
+    // Prevent infinite loops when setting the default field
+    const isFieldInitialized = useRef(false);
 
     const getTypeId = (tabName) => {
         switch (tabName) {
@@ -57,6 +60,15 @@ export default function PostsPage() {
                 const fetchedData = response.data?.data || response.data;
 
                     setPosts(fetchedData);
+                if (!isFieldInitialized.current) {
+                    if (fetchedData.length > 0 && fetchedData[0].userField) {
+                        setFieldFilter(fetchedData[0].userField.toString());
+                    } else {
+                        // If they aren't an expert or have no field, default the dropdown to ALL
+                        setFieldFilter('0');
+                    }
+                    isFieldInitialized.current = true;
+                }
             } catch (error) {
                 console.warn("error fetching posts", error);
             setPosts([]);
@@ -121,7 +133,7 @@ export default function PostsPage() {
                 {/* 3. Standard Dropdowns */}
                 <div className="filter-dropdowns">
                     <select value={fieldFilter} onChange={(e) => setFieldFilter(e.target.value)} className="filter-select">
-                        <option value="">All Fields</option>
+                        <option value="0">All Fields</option>
                         {availableFields.map(field => {
                             return (
                                 <option key={field.fieldId } value={field.fieldId }>

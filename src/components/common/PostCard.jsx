@@ -279,7 +279,7 @@ export default function PostCard({ post }) {
                     {isJob && (
                         <button onClick={handleViewInterests}>
                         <span className="metric">
-                            <Briefcase size={16} /> {post.applicantsCount || 0} applicants
+                            <Briefcase size={16} /> {post.interestedCount || 0} applicants
                         </span>
                         </button>
                     )}
